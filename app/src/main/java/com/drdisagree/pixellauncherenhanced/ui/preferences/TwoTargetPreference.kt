@@ -12,12 +12,11 @@ import com.drdisagree.pixellauncherenhanced.ui.preferences.Utils.setFirstAndLast
  * The Base preference with two target areas divided by a vertical divider
  */
 open class TwoTargetPreference : Preference {
-
     constructor(
         context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
-        defStyleRes: Int
+        defStyleRes: Int,
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
         init()
     }
@@ -25,11 +24,11 @@ open class TwoTargetPreference : Preference {
     constructor(
         context: Context,
         attrs: AttributeSet?,
-        defStyleAttr: Int
+        defStyleAttr: Int,
     ) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }
@@ -65,9 +64,7 @@ open class TwoTargetPreference : Preference {
         setFirstAndLastItemMargin(holder)
     }
 
-    protected open fun shouldHideSecondTarget(): Boolean {
-        return secondTargetResId == 0
-    }
+    protected open fun shouldHideSecondTarget(): Boolean = secondTargetResId == 0
 
     protected open val secondTargetResId: Int
         get() = 0

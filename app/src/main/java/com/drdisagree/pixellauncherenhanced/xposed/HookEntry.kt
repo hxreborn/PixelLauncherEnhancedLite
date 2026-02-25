@@ -33,7 +33,6 @@ import java.util.Queue
 import java.util.concurrent.CompletableFuture
 
 class HookEntry : ServiceConnection {
-
     private lateinit var mContext: Context
 
     init {
@@ -41,38 +40,39 @@ class HookEntry : ServiceConnection {
     }
 
     fun handleLoadPackage(loadPackageParam: LoadPackageParam) {
-        isChildProcess = try {
-            loadPackageParam.processName.contains(":")
-        } catch (_: Throwable) {
-            false
-        }
+        isChildProcess =
+            try {
+                loadPackageParam.processName.contains(":")
+            } catch (_: Throwable) {
+                false
+            }
 
         when (loadPackageParam.packageName) {
             FRAMEWORK_PACKAGE -> {
                 val phoneWindowManagerClass =
                     findClass("com.android.server.policy.PhoneWindowManager")
 
-                phoneWindowManagerClass
-                    .hookMethod("init")
-                    .runBefore { param ->
-                        try {
-                            if (!::mContext.isInitialized) {
-                                mContext = param.args[0] as Context
+                phoneWindowManagerClass.hookMethod("init").runBefore { param ->
+                    try {
+                        if (!::mContext.isInitialized) {
+                            mContext = param.args[0] as Context
 
-                                HookRes.modRes = mContext.createPackageContext(
-                                    BuildConfig.APPLICATION_ID,
-                                    Context.CONTEXT_IGNORE_SECURITY
-                                ).resources
+                            HookRes.modRes =
+                                mContext
+                                    .createPackageContext(
+                                        BuildConfig.APPLICATION_ID,
+                                        Context.CONTEXT_IGNORE_SECURITY,
+                                    ).resources
 
-                                XPrefs.init(mContext)
-                                ResourceHookManager.init(mContext)
+                            XPrefs.init(mContext)
+                            ResourceHookManager.init(mContext)
 
-                                CompletableFuture.runAsync { waitForXprefsLoad(loadPackageParam) }
-                            }
-                        } catch (throwable: Throwable) {
-                            log(this@HookEntry, throwable)
+                            CompletableFuture.runAsync { waitForXprefsLoad(loadPackageParam) }
                         }
+                    } catch (throwable: Throwable) {
+                        log(this@HookEntry, throwable)
                     }
+                }
             }
 
             else -> {
@@ -82,17 +82,18 @@ class HookEntry : ServiceConnection {
                         .parameters(
                             ClassLoader::class.java,
                             String::class.java,
-                            Context::class.java
-                        )
-                        .runAfter { param ->
+                            Context::class.java,
+                        ).runAfter { param ->
                             try {
                                 if (!::mContext.isInitialized) {
                                     mContext = param.args[2] as Context
 
-                                    HookRes.modRes = mContext.createPackageContext(
-                                        BuildConfig.APPLICATION_ID,
-                                        Context.CONTEXT_IGNORE_SECURITY
-                                    ).resources
+                                    HookRes.modRes =
+                                        mContext
+                                            .createPackageContext(
+                                                BuildConfig.APPLICATION_ID,
+                                                Context.CONTEXT_IGNORE_SECURITY,
+                                            ).resources
 
                                     XPrefs.init(mContext)
                                     ResourceHookManager.init(mContext)
@@ -192,24 +193,29 @@ class HookEntry : ServiceConnection {
 
     private fun connectRootService() {
         try {
-            val intent = Intent().apply {
-                component = ComponentName(
-                    BuildConfig.APPLICATION_ID,
-                    "${BuildConfig.APPLICATION_ID}.services.RootProviderProxy"
-                )
-            }
+            val intent =
+                Intent().apply {
+                    component =
+                        ComponentName(
+                            BuildConfig.APPLICATION_ID,
+                            "${BuildConfig.APPLICATION_ID}.services.RootProviderProxy",
+                        )
+                }
 
             mContext.bindService(
                 intent,
                 instance!!,
-                Context.BIND_AUTO_CREATE or Context.BIND_ADJUST_WITH_ACTIVITY
+                Context.BIND_AUTO_CREATE or Context.BIND_ADJUST_WITH_ACTIVITY,
             )
         } catch (throwable: Throwable) {
             log(this@HookEntry, throwable)
         }
     }
 
-    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+    override fun onServiceConnected(
+        name: ComponentName?,
+        service: IBinder?,
+    ) {
         rootProxyIPC = IRootProviderProxy.Stub.asInterface(service)
 
         synchronized(proxyQueue) {

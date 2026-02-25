@@ -17,9 +17,9 @@ android {
         applicationId = "com.drdisagree.pixellauncherenhanced"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
+        versionCode = 3
         versionName = "1.0.3"
-        base.archivesName = "PLEnhanced v${defaultConfig.versionName}"
+        base.archivesName = "PLELite v${defaultConfig.versionName}"
     }
 
     val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -31,12 +31,13 @@ android {
             keystoreProperties.load(inputStream)
         }
 
-        releaseSigning = signingConfigs.create("release") {
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
-            storePassword = keystoreProperties.getProperty("storePassword")
-        }
+        releaseSigning =
+            signingConfigs.create("release") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+            }
     } catch (_: Exception) {
     }
 
@@ -48,7 +49,7 @@ android {
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
 
@@ -59,7 +60,7 @@ android {
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -67,7 +68,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    
+
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -81,9 +82,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.recyclerview.selection)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -94,10 +93,8 @@ dependencies {
     implementation(libs.su.service)
     implementation(libs.su.nio)
     compileOnly(libs.xposedbridge)
-    implementation(libs.jaredrummler.colorpicker)
     implementation(libs.remotepreferences)
     implementation(libs.circleimageview)
-    implementation(libs.konfetti.xml)
 }
 
 tasks.register("printVersionName") {

@@ -5,8 +5,9 @@ import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_InitPackageResources
 
-class HookRes : IXposedHookInitPackageResources, IXposedHookZygoteInit {
-
+class HookRes :
+    IXposedHookInitPackageResources,
+    IXposedHookZygoteInit {
     private lateinit var modulePath: String
 
     override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {

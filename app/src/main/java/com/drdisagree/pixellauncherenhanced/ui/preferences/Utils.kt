@@ -8,7 +8,6 @@ import com.drdisagree.pixellauncherenhanced.data.config.PrefsHelper
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.Helpers.toPx
 
 object Utils {
-
     fun setFirstAndLastItemMargin(holder: PreferenceViewHolder) {
         val layoutParams = holder.itemView.layoutParams as MarginLayoutParams
 
@@ -27,10 +26,13 @@ object Utils {
             }
         }
 
-        holder.itemView.setLayoutParams(layoutParams)
+        holder.itemView.layoutParams = layoutParams
     }
 
-    fun setBackgroundResource(preference: Preference, holder: PreferenceViewHolder) {
+    fun setBackgroundResource(
+        preference: Preference,
+        holder: PreferenceViewHolder,
+    ) {
         val parent = preference.parent
 
         if (parent != null) {
@@ -43,8 +45,8 @@ object Utils {
                 }
             }
 
-            val itemCount = visiblePreferences.size
-            val position = visiblePreferences.indexOf(preference)
+            visiblePreferences.size
+            visiblePreferences.indexOf(preference)
 
             //            if (itemCount == 1) {
             //                holder.itemView.setBackgroundResource(R.drawable.container_single)
@@ -58,7 +60,7 @@ object Utils {
             //                }
             //            }
 
-            holder.itemView.setClipToOutline(true)
+            holder.itemView.clipToOutline = true
             holder.isDividerAllowedAbove = false
             holder.isDividerAllowedBelow = false
         }

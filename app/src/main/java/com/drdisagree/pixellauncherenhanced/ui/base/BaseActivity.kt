@@ -14,7 +14,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.shape.MaterialShapeDrawable
 
 open class BaseActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setupEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -24,7 +23,7 @@ open class BaseActivity : AppCompatActivity() {
         try {
             (findViewById<View>(R.id.appBarLayout) as AppBarLayout).statusBarForeground =
                 MaterialShapeDrawable.createWithElevationOverlay(
-                    applicationContext
+                    applicationContext,
                 )
         } catch (_: Exception) {
         }
@@ -43,13 +42,13 @@ open class BaseActivity : AppCompatActivity() {
                     params.leftMargin + insets.left,
                     0,
                     params.rightMargin + insets.right,
-                    0
+                    0,
                 )
 
                 params.topMargin = 0
                 params.bottomMargin = 0
 
-                v.setLayoutParams(params)
+                v.layoutParams = params
 
                 windowInsets
             }

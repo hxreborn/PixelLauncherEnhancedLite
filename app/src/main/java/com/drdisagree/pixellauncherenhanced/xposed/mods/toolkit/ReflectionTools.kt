@@ -4,28 +4,35 @@ import android.util.ArraySet
 import java.lang.reflect.Method
 import java.util.regex.Pattern
 
-fun Any?.hasMethod(methodName: String, vararg parameterTypes: Class<*>?): Boolean {
+fun Any?.hasMethod(
+    methodName: String,
+    vararg parameterTypes: Class<*>?,
+): Boolean {
     if (this == null) return false
 
-    if (this is Class<*>) return if (parameterTypes.isEmpty()) {
-        declaredMethods.toList().union(methods.toList()).any { it.name == methodName }
-    } else {
-        try {
-            getDeclaredMethod(methodName, *parameterTypes)
-            true
-        } catch (_: NoSuchMethodException) {
+    if (this is Class<*>) {
+        return if (parameterTypes.isEmpty()) {
+            declaredMethods.toList().union(methods.toList()).any { it.name == methodName }
+        } else {
             try {
-                getMethod(methodName, *parameterTypes)
+                getDeclaredMethod(methodName, *parameterTypes)
                 true
             } catch (_: NoSuchMethodException) {
-                false
+                try {
+                    getMethod(methodName, *parameterTypes)
+                    true
+                } catch (_: NoSuchMethodException) {
+                    false
+                }
             }
         }
     }
 
     return try {
         if (parameterTypes.isEmpty()) {
-            this::class.java.declaredMethods.toList().union(this::class.java.methods.toList())
+            this::class.java.declaredMethods
+                .toList()
+                .union(this::class.java.methods.toList())
                 .any { it.name == methodName }
         } else {
             try {

@@ -22,8 +22,9 @@ import com.drdisagree.pixellauncherenhanced.xposed.utils.XPrefs.Xprefs
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import java.lang.reflect.Modifier
 
-class SmartSpace(context: Context) : ModPack(context) {
-
+class SmartSpace(
+    context: Context,
+) : ModPack(context) {
     private var hideQuickspace = false
 
     override fun updatePrefs(vararg key: String) {
@@ -38,90 +39,87 @@ class SmartSpace(context: Context) : ModPack(context) {
 
     @SuppressLint("DiscouragedApi")
     override fun handleLoadPackage(loadPackageParam: LoadPackageParam) {
-        val nexusLauncherActivityClass = findClass(
-            "com.google.android.apps.nexuslauncher.NexusLauncherActivity",
-            suppressError = true
-        )
+        val nexusLauncherActivityClass =
+            findClass(
+                "com.google.android.apps.nexuslauncher.NexusLauncherActivity",
+                suppressError = true,
+            )
 
-        nexusLauncherActivityClass
-            .hookMethod("setupViews")
-            .suppressError()
-            .runBefore { param ->
-                if (!hideQuickspace) return@runBefore
+        nexusLauncherActivityClass.hookMethod("setupViews").suppressError().runBefore { param ->
+            if (!hideQuickspace) return@runBefore
 
-                // Fields are obfuscated :)
-                nexusLauncherActivityClass!!.declaredFields.forEach { field ->
-                    val fieldValue = param.thisObject.getFieldSilently(field.name)
-                    val isFinal = Modifier.isFinal(field.modifiers)
+            // Fields are obfuscated :)
+            nexusLauncherActivityClass!!.declaredFields.forEach { field ->
+                val fieldValue = param.thisObject.getFieldSilently(field.name)
+                val isFinal = Modifier.isFinal(field.modifiers)
 
-                    if (fieldValue is Boolean && isFinal && fieldValue) {
-                        param.thisObject.setField(field.name, false)
-                    }
+                if (fieldValue is Boolean && isFinal && fieldValue) {
+                    param.thisObject.setField(field.name, false)
                 }
             }
+        }
 
         val launcherAppStateClass = findClass("com.android.launcher3.LauncherAppState")
         val launcherPrefsClass = findClass("com.android.launcher3.LauncherPrefs")
-        val launcherPrefsCompanionClass = findClass(
-            $$"com.android.launcher3.LauncherPrefs$Companion",
-            suppressError = true
-        )
+        val launcherPrefsCompanionClass =
+            findClass(
+                $$"com.android.launcher3.LauncherPrefs$Companion",
+                suppressError = true,
+            )
         var quickspaceListenerRegistered = false
 
-        launcherAppStateClass
-            .hookConstructor()
-            .runAfter { param ->
-                if (!hideQuickspace || quickspaceListenerRegistered) return@runAfter
+        launcherAppStateClass.hookConstructor().runAfter { param ->
+            if (!hideQuickspace || quickspaceListenerRegistered) return@runAfter
 
-                val context = param.thisObject.getAnyField("mContext", "context") as Context
-                val mModel = param.thisObject.getAnyField("mModel", "model")
+            val context = param.thisObject.getAnyField("mContext", "context") as Context
+            val mModel = param.thisObject.getAnyField("mModel", "model")
 
-                // Doesn't exist in Android 16 beta 4+
-                val mOnTerminateCallback = param.thisObject.getFieldSilently("mOnTerminateCallback")
+            // Doesn't exist in Android 16 beta 4+
+            val mOnTerminateCallback = param.thisObject.getFieldSilently("mOnTerminateCallback")
 
-                val firstPagePinnedItemListener =
-                    SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                        if (SMARTSPACE_ON_HOME_SCREEN == key) {
-                            mModel.callMethod("forceReload")
-                        }
+            val firstPagePinnedItemListener =
+                SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+                    if (SMARTSPACE_ON_HOME_SCREEN == key) {
+                        mModel.callMethod("forceReload")
                     }
+                }
 
-                val launcherPrefs = try {
+            val launcherPrefs =
+                try {
                     launcherPrefsClass.callStaticMethod("getPrefs", context)
                 } catch (_: Throwable) {
                     launcherPrefsCompanionClass.callStaticMethod("getPrefs", context)
                 }
 
-                launcherPrefs.callMethod(
-                    "registerOnSharedPreferenceChangeListener",
-                    firstPagePinnedItemListener
-                )
-                quickspaceListenerRegistered = true
+            launcherPrefs.callMethod(
+                "registerOnSharedPreferenceChangeListener",
+                firstPagePinnedItemListener,
+            )
+            quickspaceListenerRegistered = true
 
-                mOnTerminateCallback.callMethod(
-                    "add",
-                    Runnable {
-                        launcherPrefs.callMethod(
-                            "unregisterOnSharedPreferenceChangeListener",
-                            firstPagePinnedItemListener
-                        )
-                        quickspaceListenerRegistered = false
-                    }
-                )
-            }
+            mOnTerminateCallback.callMethod(
+                "add",
+                Runnable {
+                    launcherPrefs.callMethod(
+                        "unregisterOnSharedPreferenceChangeListener",
+                        firstPagePinnedItemListener,
+                    )
+                    quickspaceListenerRegistered = false
+                },
+            )
+        }
 
-        val modelCallbacksClass = findClass(
-            "com.android.launcher3.ModelCallbacks",
-            suppressError = true
-        )
+        val modelCallbacksClass =
+            findClass(
+                "com.android.launcher3.ModelCallbacks",
+                suppressError = true,
+            )
 
-        modelCallbacksClass
-            .hookConstructor()
-            .runAfter { param ->
-                if (!hideQuickspace) return@runAfter
+        modelCallbacksClass.hookConstructor().runAfter { param ->
+            if (!hideQuickspace) return@runAfter
 
-                param.thisObject.setFieldSilently("isFirstPagePinnedItemEnabled", false)
-            }
+            param.thisObject.setFieldSilently("isFirstPagePinnedItemEnabled", false)
+        }
 
         modelCallbacksClass
             .hookMethod("setIsFirstPagePinnedItemEnabled")
@@ -157,38 +155,34 @@ class SmartSpace(context: Context) : ModPack(context) {
                 }
             }
 
-        workspaceClass
-            .hookMethod("bindAndInitFirstWorkspaceScreen")
-            .runBefore { param ->
-                if (!hideQuickspace) return@runBefore
+        workspaceClass.hookMethod("bindAndInitFirstWorkspaceScreen").runBefore { param ->
+            if (!hideQuickspace) return@runBefore
 
-                val mWorkspaceScreens = param.thisObject.getField("mWorkspaceScreens")
+            val mWorkspaceScreens = param.thisObject.getField("mWorkspaceScreens")
 
-                if (!(mWorkspaceScreens.callMethod("containsKey", 0) as Boolean)) {
-                    val childCount = param.thisObject.callMethod("getChildCount") as Int
-                    param.thisObject.callMethod("insertNewWorkspaceScreen", 0, childCount)
-                }
-
-                param.thisObject.setField("mFirstPagePinnedItem", null)
-                param.result = null
+            if (!(mWorkspaceScreens.callMethod("containsKey", 0) as Boolean)) {
+                val childCount = param.thisObject.callMethod("getChildCount") as Int
+                param.thisObject.callMethod("insertNewWorkspaceScreen", 0, childCount)
             }
+
+            param.thisObject.setField("mFirstPagePinnedItem", null)
+            param.result = null
+        }
 
         val utilitiesClass = findClass("com.android.launcher3.Utilities")
 
-        utilitiesClass
-            .hookMethod("showQuickspace")
-            .suppressError()
-            .runBefore { param ->
-                if (!hideQuickspace) return@runBefore
+        utilitiesClass.hookMethod("showQuickspace").suppressError().runBefore { param ->
+            if (!hideQuickspace) return@runBefore
 
-                param.result = false
-            }
+            param.result = false
+        }
 
-        val gridSizeMigrationDBControllerClass = findClass(
-            "com.android.launcher3.model.GridSizeMigrationDBController",
-            "com.android.launcher3.model.GridSizeMigrationUtil",
-            "com.android.launcher3.model.ModelUtils",
-        )
+        val gridSizeMigrationDBControllerClass =
+            findClass(
+                "com.android.launcher3.model.GridSizeMigrationDBController",
+                "com.android.launcher3.model.GridSizeMigrationUtil",
+                "com.android.launcher3.model.ModelUtils",
+            )
         val gridOccupancyClass = findClass("com.android.launcher3.util.GridOccupancy")!!
 
         gridSizeMigrationDBControllerClass
@@ -208,20 +202,21 @@ class SmartSpace(context: Context) : ModPack(context) {
                 val sortedItemsToPlace = param.args[6 + incrementIndex] as List<*>
                 val idsInUse = runCatching { param.args[7 + incrementIndex] as List<*> }.getOrNull()
 
-                val occupied = gridOccupancyClass
-                    .getDeclaredConstructor(
-                        Int::class.javaPrimitiveType,
-                        Int::class.javaPrimitiveType
-                    )
-                    .newInstance(trgX, trgY)
+                val occupied =
+                    gridOccupancyClass
+                        .getDeclaredConstructor(
+                            Int::class.javaPrimitiveType,
+                            Int::class.javaPrimitiveType,
+                        ).newInstance(trgX, trgY)
                 val trg = Point(trgX, trgY)
                 val next = Point(0, 0)
 
-                val existedEntries = if (destReader.hasMethod("mWorkspaceEntriesByScreenId")) {
-                    destReader.callMethod("mWorkspaceEntriesByScreenId")
-                } else {
-                    destReader.getField("mWorkspaceEntriesByScreenId")
-                }.callMethod("get", screenId) as? List<*>
+                val existedEntries =
+                    if (destReader.hasMethod("mWorkspaceEntriesByScreenId")) {
+                        destReader.callMethod("mWorkspaceEntriesByScreenId")
+                    } else {
+                        destReader.getField("mWorkspaceEntriesByScreenId")
+                    }.callMethod("get", screenId) as? List<*>
 
                 if (existedEntries != null) {
                     for (dbEntry in existedEntries) {
@@ -230,7 +225,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                         } else if (gridOccupancyClass.hasMethod(
                                 "markCells",
                                 dbEntry::class.java,
-                                Boolean::class.java
+                                Boolean::class.java,
                             )
                         ) {
                             occupied.callMethod("markCells", dbEntry, true)
@@ -241,7 +236,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                                 dbEntry.getField("cellX"),
                                 dbEntry.getField("cellY"),
                                 dbEntry.getField("spanX"),
-                                dbEntry.getField("spanY")
+                                dbEntry.getField("spanY"),
                             )
                         }
                     }
@@ -259,20 +254,22 @@ class SmartSpace(context: Context) : ModPack(context) {
 
                     for (y in next.y until trg.y) {
                         for (x in next.x until trg.x) {
-                            val fits = occupied.callMethod(
-                                "isRegionVacant",
-                                x,
-                                y,
-                                entry.getField("spanX"),
-                                entry.getField("spanY")
-                            ) as Boolean
-                            val minFits = occupied.callMethod(
-                                "isRegionVacant",
-                                x,
-                                y,
-                                entry.getField("minSpanX"),
-                                entry.getField("minSpanY")
-                            ) as Boolean
+                            val fits =
+                                occupied.callMethod(
+                                    "isRegionVacant",
+                                    x,
+                                    y,
+                                    entry.getField("spanX"),
+                                    entry.getField("spanY"),
+                                ) as Boolean
+                            val minFits =
+                                occupied.callMethod(
+                                    "isRegionVacant",
+                                    x,
+                                    y,
+                                    entry.getField("minSpanX"),
+                                    entry.getField("minSpanY"),
+                                ) as Boolean
 
                             if (minFits) {
                                 entry.setField("spanX", entry.getField("minSpanX"))
@@ -284,12 +281,16 @@ class SmartSpace(context: Context) : ModPack(context) {
                                 entry.setField("cellX", x)
                                 entry.setField("cellY", y)
 
-                                if (gridOccupancyClass.hasMethod("markCells", entry!!::class.java)) {
+                                if (gridOccupancyClass.hasMethod(
+                                        "markCells",
+                                        entry!!::class.java,
+                                    )
+                                ) {
                                     occupied.callMethod("markCells", entry)
                                 } else if (gridOccupancyClass.hasMethod(
                                         "markCells",
                                         entry::class.java,
-                                        Boolean::class.java
+                                        Boolean::class.java,
                                     )
                                 ) {
                                     occupied.callMethod("markCells", entry, true)
@@ -300,7 +301,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                                         entry.getField("cellX"),
                                         entry.getField("cellY"),
                                         entry.getField("spanX"),
-                                        entry.getField("spanY")
+                                        entry.getField("spanY"),
                                     )
                                 }
 
@@ -315,7 +316,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                                             entry,
                                             srcReader.getField("mTableName"),
                                             destReader.getField("mTableName"),
-                                            idsInUse
+                                            idsInUse,
                                         )
                                     } else {
                                         param.thisObject.callMethod(
@@ -324,7 +325,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                                             entry,
                                             srcReader.getField("mTableName"),
                                             destReader.getField("mTableName"),
-                                            idsInUse
+                                            idsInUse,
                                         )
                                     }
                                 } else {
@@ -335,7 +336,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                                             param.args[3],
                                             entry,
                                             srcReader.getField("mTableName"),
-                                            destReader.getField("mTableName")
+                                            destReader.getField("mTableName"),
                                         )
                                     } else {
                                         param.thisObject.callMethod(
@@ -343,7 +344,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                                             helper,
                                             entry,
                                             srcReader.getField("mTableName"),
-                                            destReader.getField("mTableName")
+                                            destReader.getField("mTableName"),
                                         )
                                     }
                                 }
@@ -360,14 +361,16 @@ class SmartSpace(context: Context) : ModPack(context) {
                 param.result = null
             }
 
-        val gridSizeMigrationLogicClass = findClass(
-            "com.android.launcher3.model.GridSizeMigrationLogic",
-            suppressError = true
-        )
-        val workspaceItemsToPlaceClass = findClass(
-            $$"com.android.launcher3.model.GridSizeMigrationLogic$WorkspaceItemsToPlace",
-            suppressError = true
-        )
+        val gridSizeMigrationLogicClass =
+            findClass(
+                "com.android.launcher3.model.GridSizeMigrationLogic",
+                suppressError = true,
+            )
+        val workspaceItemsToPlaceClass =
+            findClass(
+                $$"com.android.launcher3.model.GridSizeMigrationLogic$WorkspaceItemsToPlace",
+                suppressError = true,
+            )
         val cellAndSpanClass = findClass("com.android.launcher3.util.CellAndSpan")
 
         gridSizeMigrationLogicClass
@@ -383,18 +386,18 @@ class SmartSpace(context: Context) : ModPack(context) {
                 val existedEntries = param.args[4] as? List<*>
 
                 var cellAndSpan: Any? = null
-                val workspaceItemsToPlace = workspaceItemsToPlaceClass!!
-                    .getDeclaredConstructor(
-                        sortedItemsToPlace::class.java,
-                        sortedItemsToPlace::class.java
-                    )
-                    .newInstance(sortedItemsToPlace, ArrayList<Any>())
-                val occupied = gridOccupancyClass
-                    .getDeclaredConstructor(
-                        Int::class.javaPrimitiveType,
-                        Int::class.javaPrimitiveType
-                    )
-                    .newInstance(trgX, trgY)
+                val workspaceItemsToPlace =
+                    workspaceItemsToPlaceClass!!
+                        .getDeclaredConstructor(
+                            sortedItemsToPlace::class.java,
+                            sortedItemsToPlace::class.java,
+                        ).newInstance(sortedItemsToPlace, ArrayList<Any>())
+                val occupied =
+                    gridOccupancyClass
+                        .getDeclaredConstructor(
+                            Int::class.javaPrimitiveType,
+                            Int::class.javaPrimitiveType,
+                        ).newInstance(trgX, trgY)
 
                 val trg = Point(trgX, trgY)
                 val next = Point(0, 0)
@@ -410,7 +413,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                         } else if (gridOccupancyClass.hasMethod(
                                 "markCells",
                                 dbEntry::class.java,
-                                Boolean::class.java
+                                Boolean::class.java,
                             )
                         ) {
                             occupied.callMethod("markCells", dbEntry, true)
@@ -421,17 +424,18 @@ class SmartSpace(context: Context) : ModPack(context) {
                                 dbEntry.getField("cellX"),
                                 dbEntry.getField("cellY"),
                                 dbEntry.getField("spanX"),
-                                dbEntry.getField("spanY")
+                                dbEntry.getField("spanY"),
                             )
                         }
                     }
                 }
 
-                val iterator = if (workspaceItemsToPlace.hasMethod("getMRemainingItemsToPlace")) {
-                    workspaceItemsToPlace.callMethod("getMRemainingItemsToPlace")
-                } else {
-                    workspaceItemsToPlace.getField("mRemainingItemsToPlace")
-                }.callMethod("iterator") as Iterator<*>
+                val iterator =
+                    if (workspaceItemsToPlace.hasMethod("getMRemainingItemsToPlace")) {
+                        workspaceItemsToPlace.callMethod("getMRemainingItemsToPlace")
+                    } else {
+                        workspaceItemsToPlace.getField("mRemainingItemsToPlace")
+                    }.callMethod("iterator") as Iterator<*>
 
                 while (iterator.hasNext()) {
                     val dbEntry = iterator.next()
@@ -459,22 +463,22 @@ class SmartSpace(context: Context) : ModPack(context) {
                                     x,
                                     y,
                                     dbEntry.getField("minSpanX"),
-                                    dbEntry.getField("minSpanY")
+                                    dbEntry.getField("minSpanY"),
                                 ) as Boolean
                             ) {
-                                cellAndSpan = cellAndSpanClass!!
-                                    .getDeclaredConstructor(
-                                        Int::class.javaPrimitiveType,
-                                        Int::class.javaPrimitiveType,
-                                        Int::class.javaPrimitiveType,
-                                        Int::class.javaPrimitiveType
-                                    )
-                                    .newInstance(
-                                        x,
-                                        y,
-                                        dbEntry.getField("minSpanX"),
-                                        dbEntry.getField("minSpanY")
-                                    )
+                                cellAndSpan =
+                                    cellAndSpanClass!!
+                                        .getDeclaredConstructor(
+                                            Int::class.javaPrimitiveType,
+                                            Int::class.javaPrimitiveType,
+                                            Int::class.javaPrimitiveType,
+                                            Int::class.javaPrimitiveType,
+                                        ).newInstance(
+                                            x,
+                                            y,
+                                            dbEntry.getField("minSpanX"),
+                                            dbEntry.getField("minSpanY"),
+                                        )
                                 break
                             }
 
@@ -497,7 +501,7 @@ class SmartSpace(context: Context) : ModPack(context) {
                         } else if (gridOccupancyClass.hasMethod(
                                 "markCells",
                                 dbEntry::class.java,
-                                Boolean::class.java
+                                Boolean::class.java,
                             )
                         ) {
                             occupied.callMethod("markCells", dbEntry, true)
@@ -508,13 +512,13 @@ class SmartSpace(context: Context) : ModPack(context) {
                                 it.getField("cellX"),
                                 it.getField("cellY"),
                                 it.getField("spanX"),
-                                it.getField("spanY")
+                                it.getField("spanY"),
                             )
                         }
 
                         next.set(
                             dbEntry.getField("cellX") as Int + dbEntry.getField("spanX") as Int,
-                            dbEntry.getField("cellY") as Int
+                            dbEntry.getField("cellY") as Int,
                         )
 
                         if (workspaceItemsToPlace.hasMethod("getMPlacementSolution")) {
@@ -532,25 +536,21 @@ class SmartSpace(context: Context) : ModPack(context) {
 
         val loaderCursorClass = findClass("com.android.launcher3.model.LoaderCursor")
 
-        loaderCursorClass
-            .hookMethod("checkAndAddItem")
-            .runBefore { param ->
-                if (!hideQuickspace) return@runBefore
+        loaderCursorClass.hookMethod("checkAndAddItem").runBefore { param ->
+            if (!hideQuickspace) return@runBefore
 
-                val dataModel = param.args[1]
-                dataModel.setFieldSilently("isFirstPagePinnedItemEnabled", false)
-            }
+            val dataModel = param.args[1]
+            dataModel.setFieldSilently("isFirstPagePinnedItemEnabled", false)
+        }
 
         val loaderTask = findClass("com.android.launcher3.model.LoaderTask")
 
-        loaderTask
-            .hookMethod("loadWorkspace", "loadWorkspaceImpl")
-            .runAfter { param ->
-                if (!hideQuickspace) return@runAfter
+        loaderTask.hookMethod("loadWorkspace", "loadWorkspaceImpl").runAfter { param ->
+            if (!hideQuickspace) return@runAfter
 
-                val mBgDataModel = param.thisObject.getField("mBgDataModel")
-                mBgDataModel.setFieldSilently("isFirstPagePinnedItemEnabled", false)
-            }
+            val mBgDataModel = param.thisObject.getField("mBgDataModel")
+            mBgDataModel.setFieldSilently("isFirstPagePinnedItemEnabled", false)
+        }
     }
 
     companion object {

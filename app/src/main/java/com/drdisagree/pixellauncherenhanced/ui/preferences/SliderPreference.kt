@@ -37,9 +37,8 @@ import kotlin.math.roundToInt
 class SliderPreference(
     context: Context,
     attrs: AttributeSet?,
-    defStyleAttr: Int
+    defStyleAttr: Int,
 ) : Preference(context, attrs, defStyleAttr) {
-
     private var valueFrom: Float
     private var valueTo: Float
     private val tickVisible: Boolean
@@ -85,21 +84,22 @@ class SliderPreference(
             showValueLabel = getBoolean(R.styleable.SliderPreference_showValueLabel, true)
             valueFormat = getString(R.styleable.SliderPreference_valueFormat)
             isDecimalFormat = getBoolean(R.styleable.SliderPreference_isDecimalFormat, false)
-            tickVisible = getBoolean(
-                R.styleable.SliderPreference_tickVisible,
-                abs(valueTo - valueFrom) <= 25
-            )
+            tickVisible =
+                getBoolean(
+                    R.styleable.SliderPreference_tickVisible,
+                    abs(valueTo - valueFrom) <= 25,
+                )
             showController = getBoolean(R.styleable.SliderPreference_showController, false)
-            decimalFormat = if (hasValue(R.styleable.SliderPreference_decimalFormat)) {
-                getString(R.styleable.SliderPreference_decimalFormat)
-            } else {
-                "#.#" // Default decimal format
-            }
+            decimalFormat =
+                if (hasValue(R.styleable.SliderPreference_decimalFormat)) {
+                    getString(R.styleable.SliderPreference_decimalFormat)
+                } else {
+                    "#.#" // Default decimal format
+                }
             outputScale = getFloat(R.styleable.SliderPreference_outputScale, 1f)
             showDefaultIndicator =
                 getBoolean(R.styleable.SliderPreference_showDefaultIndicator, false)
-            hideValueOnDefault =
-                getBoolean(R.styleable.SliderPreference_hideValueOnDefault, false)
+            hideValueOnDefault = getBoolean(R.styleable.SliderPreference_hideValueOnDefault, false)
             val defaultValStr = getString(androidx.preference.R.styleable.Preference_defaultValue)
 
             if (valueFormat == null) valueFormat = ""
@@ -115,7 +115,7 @@ class SliderPreference(
             } catch (_: Exception) {
                 Log.e(
                     TAG,
-                    String.format("SliderPreference: Error parsing default values for key: $key")
+                    String.format("SliderPreference: Error parsing default values for key: $key"),
                 )
             }
 
@@ -212,7 +212,6 @@ class SliderPreference(
 
         mOutputView!!.text = getOutputText()
 
-
         if (showController) updateControllerButtons()
 
         handleResetButton()
@@ -221,12 +220,16 @@ class SliderPreference(
     }
 
     private fun getOutputText(): String {
-        val outputValue = mSlider!!.values.joinToString(separator = " - ") { sliderValue ->
-            labelFormatter.getFormattedValue(sliderValue)
-        }
+        val outputValue =
+            mSlider!!.values.joinToString(separator = " - ") { sliderValue ->
+                labelFormatter.getFormattedValue(sliderValue)
+            }
 
-        return if (showValueLabel) context.getString(R.string.value_output, outputValue)
-        else outputValue
+        return if (showValueLabel) {
+            context.getString(R.string.value_output, outputValue)
+        } else {
+            outputValue
+        }
     }
 
     fun setMin(value: Float) {
@@ -269,10 +272,11 @@ class SliderPreference(
 
         for (i in values.indices) {
             val round = BigDecimal((values[i] / mSlider!!.stepSize).roundToInt())
-            val value = min(
-                max(step.multiply(round).toDouble(), mSlider!!.valueFrom.toDouble()),
-                mSlider!!.valueTo.toDouble()
-            )
+            val value =
+                min(
+                    max(step.multiply(round).toDouble(), mSlider!!.valueFrom.toDouble()),
+                    mSlider!!.valueTo.toDouble(),
+                )
             if (value != values[i].toDouble()) {
                 values[i] = value.toFloat()
                 needsCommit = true
@@ -316,45 +320,44 @@ class SliderPreference(
         mPlusButton?.isEnabled = isEnabled && currentValue < valueTo
     }
 
-    var labelFormatter: LabelFormatter = LabelFormatter {
-        val formattedValues = mSlider!!.values.joinToString(separator = " - ") { sliderValue ->
-            if (valueFormat != null && (valueFormat!!.isBlank() || valueFormat!!.isEmpty())) {
-                if (!isDecimalFormat) {
-                    (sliderValue / outputScale).toInt().toString()
+    var labelFormatter: LabelFormatter =
+        LabelFormatter {
+            val formattedValues =
+                mSlider!!.values.joinToString(separator = " - ") { sliderValue ->
+                    if (valueFormat != null && (valueFormat!!.isBlank() || valueFormat!!.isEmpty())) {
+                        if (!isDecimalFormat) {
+                            (sliderValue / outputScale).toInt().toString()
+                        } else {
+                            DecimalFormat(decimalFormat).format((sliderValue / outputScale).toDouble())
+                        }
+                    } else {
+                        if (!isDecimalFormat) {
+                            (sliderValue / 1f).toInt().toString()
+                        } else {
+                            DecimalFormat(decimalFormat).format((sliderValue / outputScale).toDouble())
+                        }
+                    }
+                }
+
+            if (showDefaultIndicator && defaultValue.isNotEmpty() && defaultValue.containsAll(mSlider!!.values)) {
+                if (!hideValueOnDefault) {
+                    getContext().getString(
+                        R.string.opt_selected3,
+                        formattedValues,
+                        valueFormat,
+                        getContext().getString(R.string.opt_default),
+                    )
                 } else {
-                    DecimalFormat(decimalFormat).format((sliderValue / outputScale).toDouble())
+                    getContext().getString(R.string.opt_default).replace("[()]".toRegex(), "")
                 }
             } else {
-                if (!isDecimalFormat) {
-                    (sliderValue / 1f).toInt().toString()
-                } else {
-                    DecimalFormat(decimalFormat).format((sliderValue / outputScale).toDouble())
-                }
-            }
-        }
-
-        if (showDefaultIndicator &&
-            defaultValue.isNotEmpty() &&
-            defaultValue.containsAll(mSlider!!.values)
-        ) {
-            if (!hideValueOnDefault) {
                 getContext().getString(
-                    R.string.opt_selected3,
+                    R.string.opt_selected2,
                     formattedValues,
                     valueFormat,
-                    getContext().getString(R.string.opt_default)
                 )
-            } else {
-                getContext().getString(R.string.opt_default).replace("[()]".toRegex(), "")
             }
-        } else {
-            getContext().getString(
-                R.string.opt_selected2,
-                formattedValues,
-                valueFormat
-            )
         }
-    }
 
     private var changeListener: RangeSlider.OnChangeListener =
         RangeSlider.OnChangeListener { slider: RangeSlider, _: Float, fromUser: Boolean ->
@@ -396,7 +399,7 @@ class SliderPreference(
         fun setValues(
             sharedPreferences: SharedPreferences,
             key: String?,
-            values: List<Float>
+            values: List<Float>,
         ): Boolean {
             try {
                 val writer = StringWriter()
@@ -424,7 +427,7 @@ class SliderPreference(
         fun getValues(
             prefs: SharedPreferences,
             key: String?,
-            defaultValue: Float
+            defaultValue: Float,
         ): MutableList<Float> {
             var values: MutableList<Float>
 
@@ -477,7 +480,7 @@ class SliderPreference(
         fun getSingleFloatValue(
             prefs: SharedPreferences,
             key: String?,
-            defaultValue: Float
+            defaultValue: Float,
         ): Float {
             var result = defaultValue
 
@@ -489,8 +492,10 @@ class SliderPreference(
             return result
         }
 
-        fun getSingleIntValue(prefs: SharedPreferences, key: String?, defaultValue: Int): Int {
-            return getSingleFloatValue(prefs, key, defaultValue.toFloat()).roundToInt()
-        }
+        fun getSingleIntValue(
+            prefs: SharedPreferences,
+            key: String?,
+            defaultValue: Int,
+        ): Int = getSingleFloatValue(prefs, key, defaultValue.toFloat()).roundToInt()
     }
 }

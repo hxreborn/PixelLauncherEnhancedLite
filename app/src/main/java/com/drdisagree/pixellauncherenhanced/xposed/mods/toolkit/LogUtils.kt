@@ -14,41 +14,62 @@ fun log(message: Any?) {
     XposedBridge.log(message.toString())
 }
 
-fun log(tag: String, message: Any?) {
+fun log(
+    tag: String,
+    message: Any?,
+) {
     XposedBridge.log(
-        "[PLEnhanced] $tag => $message"
+        "[PLELite] $tag => $message",
     )
 }
 
-fun <T : Any> log(clazz: T, message: Any?) {
+fun <T : Any> log(
+    clazz: T,
+    message: Any?,
+) {
     XposedBridge.log(
-        "[PLEnhanced] ${clazz.javaClass.simpleName.replace("\$Companion", "")} => $message"
+        "[PLELite] ${clazz.javaClass.simpleName.replace("\$Companion", "")} => $message",
     )
 }
 
-fun <T : Any> log(clazz: T, throwable: Throwable?) {
+fun <T : Any> log(
+    clazz: T,
+    throwable: Throwable?,
+) {
     XposedBridge.log(
-        "[PLEnhanced] ${clazz.javaClass.simpleName.replace("\$Companion", "")} => $throwable"
+        "[PLELite] ${clazz.javaClass.simpleName.replace("\$Companion", "")} => $throwable",
     )
 }
 
-fun <T : Any> log(clazz: T, exception: Exception?) {
+fun <T : Any> log(
+    clazz: T,
+    exception: Exception?,
+) {
     XposedBridge.log(
-        "[PLEnhanced] ${clazz.javaClass.simpleName.replace("\$Companion", "")} => $exception"
+        "[PLELite] ${clazz.javaClass.simpleName.replace("\$Companion", "")} => $exception",
     )
 }
 
-fun findAndDumpClass(className: String, classLoader: ClassLoader?): Class<*> {
+fun findAndDumpClass(
+    className: String,
+    classLoader: ClassLoader?,
+): Class<*> {
     dumpClass(className, classLoader)
     return findClass(className, classLoader)
 }
 
-fun findAndDumpClassIfExists(className: String, classLoader: ClassLoader?): Class<*> {
+fun findAndDumpClassIfExists(
+    className: String,
+    classLoader: ClassLoader?,
+): Class<*> {
     dumpClass(className, classLoader)
     return findClassIfExists(className, classLoader)
 }
 
-private fun dumpClass(className: String, classLoader: ClassLoader?) {
+private fun dumpClass(
+    className: String,
+    classLoader: ClassLoader?,
+) {
     val ourClass = findClassIfExists(className, classLoader)
     if (ourClass == null) {
         XposedBridge.log("DumpClass: Class is null")
@@ -123,7 +144,7 @@ fun View.dumpChildViews() {
 
 private fun dumpChildViewsRecursive(
     viewGroup: ViewGroup,
-    indentationLevel: Int
+    indentationLevel: Int,
 ) {
     for (i in 0 until viewGroup.childCount) {
         val childView = viewGroup.getChildAt(i)
@@ -134,7 +155,10 @@ private fun dumpChildViewsRecursive(
     }
 }
 
-private fun logViewInfo(view: View, indentationLevel: Int) {
+private fun logViewInfo(
+    view: View,
+    indentationLevel: Int,
+) {
     val indentation = repeatString("\t", indentationLevel)
     val viewName = view.javaClass.simpleName
     val superclassName = view.javaClass.superclass?.simpleName ?: "None"
@@ -157,7 +181,10 @@ private fun logViewInfo(view: View, indentationLevel: Int) {
 }
 
 @Suppress("SameParameterValue")
-private fun repeatString(str: String, times: Int): String {
+private fun repeatString(
+    str: String,
+    times: Int,
+): String {
     val result = StringBuilder()
     for (i in 0 until times) {
         result.append(str)

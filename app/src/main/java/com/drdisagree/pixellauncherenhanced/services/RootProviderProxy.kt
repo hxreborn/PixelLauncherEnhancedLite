@@ -11,28 +11,28 @@ import com.drdisagree.pixellauncherenhanced.R
 import com.topjohnwu.superuser.Shell
 
 class RootProviderProxy : Service() {
+    override fun onBind(intent: Intent): IBinder = RootProviderProxyIPC(this)
 
-    override fun onBind(intent: Intent): IBinder {
-        return RootProviderProxyIPC(this)
-    }
-
-    internal inner class RootProviderProxyIPC(context: Context) : IRootProviderProxy.Stub() {
-
+    internal inner class RootProviderProxyIPC(
+        context: Context,
+    ) : IRootProviderProxy.Stub() {
         init {
             try {
                 Shell.setDefaultBuilder(
-                    Shell.Builder.create()
+                    Shell.Builder
+                        .create()
                         .setFlags(Shell.FLAG_MOUNT_MASTER)
-                        .setTimeout(20)
+                        .setTimeout(20),
                 )
             } catch (_: Throwable) {
             }
 
             rootGranted = Shell.getShell().isRoot
 
-            rootAllowedPacks = listOf<String>(
-                *context.resources.getStringArray(R.array.root_requirement)
-            )
+            rootAllowedPacks =
+                listOf<String>(
+                    *context.resources.getStringArray(R.array.root_requirement),
+                )
         }
 
         @Throws(RemoteException::class)
@@ -53,7 +53,7 @@ class RootProviderProxy : Service() {
                 throw RemoteException("Root permission denied")
             }
 
-            ensureSecurity(Binder.getCallingUid())
+            ensureSecurity(getCallingUid())
         }
 
         @Throws(RemoteException::class)

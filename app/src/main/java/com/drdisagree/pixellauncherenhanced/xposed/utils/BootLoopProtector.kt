@@ -6,7 +6,6 @@ import com.drdisagree.pixellauncherenhanced.xposed.utils.XPrefs.XprefsIsInitiali
 import java.util.Calendar
 
 object BootLoopProtector {
-
     const val LOAD_TIME_KEY_KEY = "packageLastLoad_"
     const val PACKAGE_STRIKE_KEY_KEY = "packageStrike_"
 
@@ -21,16 +20,15 @@ object BootLoopProtector {
         var strikeCount = Xprefs.getInt(strikeKey, 0)
 
         if (currentTime - lastLoadTime > 40000) {
-            Xprefs.edit()
+            Xprefs
+                .edit()
                 .putLong(loadTimeKey, currentTime)
                 .putInt(strikeKey, 0)
                 .commit()
         } else if (strikeCount >= 3) {
             return true
         } else {
-            Xprefs.edit()
-                .putInt(strikeKey, ++strikeCount)
-                .commit()
+            Xprefs.edit().putInt(strikeKey, ++strikeCount).commit()
         }
 
         return false
@@ -45,7 +43,8 @@ object BootLoopProtector {
             val strikeKey = "$PACKAGE_STRIKE_KEY_KEY$packageName"
             val currentTime = Calendar.getInstance().time.time
 
-            Xprefs.edit()
+            Xprefs
+                .edit()
                 .putLong(loadTimeKey, currentTime)
                 .putInt(strikeKey, 0)
                 .commit()

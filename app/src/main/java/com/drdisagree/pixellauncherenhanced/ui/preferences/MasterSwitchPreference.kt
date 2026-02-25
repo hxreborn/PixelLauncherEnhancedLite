@@ -6,12 +6,11 @@ import androidx.preference.SwitchPreferenceCompat
 import com.drdisagree.pixellauncherenhanced.R
 
 class MasterSwitchPreference : SwitchPreferenceCompat {
-
     constructor(
         context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
-        defStyleRes: Int
+        defStyleRes: Int,
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
         initResource()
     }
@@ -19,7 +18,7 @@ class MasterSwitchPreference : SwitchPreferenceCompat {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         initResource()
     }

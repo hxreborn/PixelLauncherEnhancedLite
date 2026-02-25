@@ -6,7 +6,6 @@ import com.google.android.material.color.DynamicColors
 import java.lang.ref.WeakReference
 
 class PLEnhanced : Application() {
-
     companion object {
         private var instance: PLEnhanced? = null
         private var contextReference: WeakReference<Context>? = null
@@ -14,9 +13,10 @@ class PLEnhanced : Application() {
         val appContext: Context
             get() {
                 if (contextReference == null || contextReference?.get() == null) {
-                    contextReference = WeakReference(
-                        instance?.applicationContext ?: getInstance().applicationContext
-                    )
+                    contextReference =
+                        WeakReference(
+                            instance?.applicationContext ?: getInstance().applicationContext,
+                        )
                 }
                 return contextReference!!.get()!!
             }

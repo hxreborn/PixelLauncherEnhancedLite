@@ -13,8 +13,9 @@ import com.drdisagree.pixellauncherenhanced.ui.fragments.HomePage
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.system.exitProcess
 
-class MainActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
-
+class MainActivity :
+    BaseActivity(),
+    PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,9 +32,8 @@ class MainActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartF
         if (!isRooted) {
             MaterialAlertDialogBuilder(
                 this@MainActivity,
-                R.style.MaterialComponents_MaterialAlertDialog
-            )
-                .setCancelable(false)
+                R.style.MaterialComponents_MaterialAlertDialog,
+            ).setCancelable(false)
                 .setTitle(getText(R.string.root_connection_failed_title))
                 .setMessage(getText(R.string.root_connection_failed_desc))
                 .setPositiveButton(getText(R.string.exit)) { dialog, i -> exitProcess(0) }
@@ -44,32 +44,34 @@ class MainActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartF
     @Suppress("deprecation")
     override fun onPreferenceStartFragment(
         caller: PreferenceFragmentCompat,
-        pref: Preference
+        pref: Preference,
     ): Boolean {
         replaceFragment(
             supportFragmentManager,
-            supportFragmentManager.fragmentFactory.instantiate(
-                classLoader, pref.fragment!!
-            ).apply {
-                arguments = pref.extras
-                setTargetFragment(caller, 0)
-            }
+            supportFragmentManager.fragmentFactory
+                .instantiate(
+                    classLoader,
+                    pref.fragment!!,
+                ).apply {
+                    arguments = pref.extras
+                    setTargetFragment(caller, 0)
+                },
         )
         return true
     }
 
     companion object {
-
-        fun replaceFragment(fragmentManager: FragmentManager, fragment: Fragment) {
+        fun replaceFragment(
+            fragmentManager: FragmentManager,
+            fragment: Fragment,
+        ) {
             if (fragmentManager.isStateSaved) return
 
             try {
                 val fragmentTag = fragment.javaClass.simpleName
-                var currentFragment = fragmentManager.findFragmentById(R.id.fragmentContainerView)
+                val currentFragment = fragmentManager.findFragmentById(R.id.fragmentContainerView)
 
-                if (currentFragment != null &&
-                    currentFragment.javaClass.simpleName == fragmentTag
-                ) {
+                if (currentFragment != null && currentFragment.javaClass.simpleName == fragmentTag) {
                     popCurrentFragment(fragmentManager)
                 }
 
@@ -77,7 +79,7 @@ class MainActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartF
                     if (fragmentManager.getBackStackEntryAt(i).name == fragmentTag) {
                         fragmentManager.popBackStack(
                             fragmentTag,
-                            POP_BACK_STACK_INCLUSIVE
+                            POP_BACK_STACK_INCLUSIVE,
                         )
                         break
                     }
@@ -88,7 +90,7 @@ class MainActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartF
                         R.anim.slide_in_right,
                         R.anim.slide_out_left,
                         R.anim.slide_in_left,
-                        R.anim.slide_out_right
+                        R.anim.slide_out_right,
                     )
 
                     replace(R.id.fragmentContainerView, fragment, fragmentTag)

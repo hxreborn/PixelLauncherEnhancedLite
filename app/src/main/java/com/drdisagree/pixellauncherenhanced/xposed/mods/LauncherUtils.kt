@@ -23,66 +23,56 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class LauncherUtils(context: Context) : ModPack(context) {
-
+class LauncherUtils(
+    context: Context,
+) : ModPack(context) {
     override fun updatePrefs(vararg key: String) {}
 
     override fun handleLoadPackage(loadPackageParam: LoadPackageParam) {
-        ThemesClass = findClass("com.android.launcher3.util.Themes")
-        GraphicsUtilsClass = findClass("com.android.launcher3.icons.GraphicsUtils")
         InvariantDeviceProfileClass = findClass("com.android.launcher3.InvariantDeviceProfile")
         BaseIconCacheClass = findClass("com.android.launcher3.icons.cache.BaseIconCache")
         QuickstepLauncherClass = findClass("com.android.launcher3.uioverrides.QuickstepLauncher")
         LauncherAppStateClass = findClass("com.android.launcher3.LauncherAppState")
-        LauncherAppStateCompanionClass = findClass(
-            $$"com.android.launcher3.LauncherAppState$Companion",
-            suppressError = true
-        )
+        LauncherAppStateCompanionClass =
+            findClass(
+                $$"com.android.launcher3.LauncherAppState$Companion",
+                suppressError = true,
+            )
 
-        InvariantDeviceProfileClass
-            .hookConstructor()
-            .runAfter { param ->
-                invariantDeviceProfileInstance = param.thisObject
-            }
+        InvariantDeviceProfileClass.hookConstructor().runAfter { param ->
+            invariantDeviceProfileInstance = param.thisObject
+        }
 
-        BaseIconCacheClass
-            .hookConstructor()
-            .runAfter { param ->
-                mIconDb = param.thisObject.getAnyField("mIconDb", "iconDb")
-                mCache = param.thisObject.getAnyField("mCache", "cache")
-            }
+        BaseIconCacheClass.hookConstructor().runAfter { param ->
+            mIconDb = param.thisObject.getAnyField("mIconDb", "iconDb")
+            mCache = param.thisObject.getAnyField("mCache", "cache")
+        }
 
-        LauncherAppStateClass
-            .hookConstructor()
-            .runAfter { param ->
-                mModel = param.thisObject.getAnyField("mModel", "model")
-                if (invariantDeviceProfileInstance == null) {
-                    invariantDeviceProfileInstance = param.thisObject.getAnyField(
+        LauncherAppStateClass.hookConstructor().runAfter { param ->
+            mModel = param.thisObject.getAnyField("mModel", "model")
+            if (invariantDeviceProfileInstance == null) {
+                invariantDeviceProfileInstance =
+                    param.thisObject.getAnyField(
                         "mInvariantDeviceProfile",
-                        "invariantDeviceProfile"
+                        "invariantDeviceProfile",
                     )
-                }
             }
+        }
 
         if (LauncherAppStateCompanionClass != null) {
-            QuickstepLauncherClass
-                .hookMethod("onCreate")
-                .runAfter { param ->
-                    if (invariantDeviceProfileInstance == null) {
-                        invariantDeviceProfileInstance =
-                            LauncherAppStateCompanionClass.callStaticMethod(
-                                "getIDP",
-                                param.thisObject
-                            )
-                    }
+            QuickstepLauncherClass.hookMethod("onCreate").runAfter { param ->
+                if (invariantDeviceProfileInstance == null) {
+                    invariantDeviceProfileInstance =
+                        LauncherAppStateCompanionClass.callStaticMethod(
+                            "getIDP",
+                            param.thisObject,
+                        )
                 }
+            }
         }
     }
 
     companion object {
-
-        private var ThemesClass: Class<*>? = null
-        private var GraphicsUtilsClass: Class<*>? = null
         private var InvariantDeviceProfileClass: Class<*>? = null
         private var BaseIconCacheClass: Class<*>? = null
         private var QuickstepLauncherClass: Class<*>? = null
@@ -96,38 +86,6 @@ class LauncherUtils(context: Context) : ModPack(context) {
 
         private var lastRestartTime = 0L
 
-        fun getAttrColor(context: Context, resID: Int): Int {
-            return runCatching {
-                ThemesClass.callStaticMethod(
-                    "getAttrColor",
-                    context,
-                    resID
-                )
-            }.getOrElse {
-                runCatching {
-                    ThemesClass.callStaticMethod(
-                        "getAttrColor",
-                        resID,
-                        context
-                    )
-                }.getOrElse {
-                    runCatching {
-                        GraphicsUtilsClass.callStaticMethod(
-                            "getAttrColor",
-                            context,
-                            resID
-                        )
-                    }.getOrElse {
-                        GraphicsUtilsClass.callStaticMethod(
-                            "getAttrColor",
-                            resID,
-                            context
-                        )
-                    }
-                }
-            } as Int
-        }
-
         fun restartLauncher(context: Context) {
             val currentTime = System.currentTimeMillis()
 
@@ -136,11 +94,12 @@ class LauncherUtils(context: Context) : ModPack(context) {
                 resetCounter(context.packageName)
 
                 Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(
-                        context,
-                        modRes.getString(R.string.restarting_launcher),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast
+                        .makeText(
+                            context,
+                            modRes.getString(R.string.restarting_launcher),
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
 
                 CoroutineScope(Dispatchers.IO).launch {
@@ -149,14 +108,6 @@ class LauncherUtils(context: Context) : ModPack(context) {
                         proxy.runCommand("killall ${context.packageName}")
                     }
                 }
-            }
-        }
-
-        fun reloadLauncher(context: Context) {
-            if (invariantDeviceProfileInstance.hasMethod("onConfigChanged", Context::class.java)) {
-                invariantDeviceProfileInstance.callMethod("onConfigChanged", context)
-            } else {
-                invariantDeviceProfileInstance.callMethod("onConfigChanged")
             }
         }
 
@@ -170,7 +121,7 @@ class LauncherUtils(context: Context) : ModPack(context) {
                     mIconDb.getField("mOpenHelper").also { mOpenHelper ->
                         mOpenHelper.callMethod(
                             "clearDB",
-                            mOpenHelper.callMethod("getWritableDatabase")
+                            mOpenHelper.callMethod("getWritableDatabase"),
                         )
                     }
                 }

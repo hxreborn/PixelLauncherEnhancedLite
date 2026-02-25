@@ -16,23 +16,26 @@ import com.topjohnwu.superuser.Shell
 import java.util.Calendar
 
 object LauncherUtils {
-
     fun Context.restartLauncher() {
-        Toast.makeText(
-            this,
-            getString(R.string.restarting_launcher),
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast
+            .makeText(
+                this,
+                getString(R.string.restarting_launcher),
+                Toast.LENGTH_SHORT,
+            ).show()
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (isPixelLauncher) {
-                resetBootloopProtectorForPackage(PIXEL_LAUNCHER_PACKAGE)
-                Shell.cmd("killall $PIXEL_LAUNCHER_PACKAGE").submit()
-            } else if (isLauncher3) {
-                resetBootloopProtectorForPackage(LAUNCHER3_PACKAGE)
-                Shell.cmd("killall $LAUNCHER3_PACKAGE").submit()
-            }
-        }, 300)
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                if (isPixelLauncher) {
+                    resetBootloopProtectorForPackage(PIXEL_LAUNCHER_PACKAGE)
+                    Shell.cmd("killall $PIXEL_LAUNCHER_PACKAGE").submit()
+                } else if (isLauncher3) {
+                    resetBootloopProtectorForPackage(LAUNCHER3_PACKAGE)
+                    Shell.cmd("killall $LAUNCHER3_PACKAGE").submit()
+                }
+            },
+            300,
+        )
     }
 
     private fun resetBootloopProtectorForPackage(packageName: String) {

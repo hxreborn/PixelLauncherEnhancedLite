@@ -16,12 +16,10 @@ import com.drdisagree.pixellauncherenhanced.data.config.RPrefs.putBoolean
 import com.drdisagree.pixellauncherenhanced.ui.preferences.Utils.setFirstAndLastItemMargin
 import com.google.android.material.materialswitch.MaterialSwitch
 
-
 /**
  * A custom preference that provides a switch toggle and a clickable preference.
  */
 class TwoTargetSwitchPreference : TwoTargetPreference {
-
     private var mSwitch: MaterialSwitch? = null
     private var mChecked = false
     private var mCheckedSet = false
@@ -31,17 +29,17 @@ class TwoTargetSwitchPreference : TwoTargetPreference {
         context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
-        defStyleRes: Int
+        defStyleRes: Int,
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
     constructor(
         context: Context,
         attrs: AttributeSet?,
-        defStyleAttr: Int
+        defStyleAttr: Int,
     ) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -86,12 +84,14 @@ class TwoTargetSwitchPreference : TwoTargetPreference {
         }
 
         holder.itemView.findViewById<View?>(R.id.widget_frame)?.apply {
-            viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    setMinimumHeight((parent as View).height)
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                }
-            })
+            viewTreeObserver.addOnGlobalLayoutListener(
+                object : OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        minimumHeight = (parent as View).height
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    }
+                },
+            )
 
             setOnClickListener {
                 if (isEnabled) {
@@ -145,17 +145,16 @@ class TwoTargetSwitchPreference : TwoTargetPreference {
         mSwitch?.isEnabled = enabled
     }
 
-    override fun shouldHideSecondTarget(): Boolean {
-        return secondTargetResId == 0
-    }
+    override fun shouldHideSecondTarget(): Boolean = secondTargetResId == 0
 
     override fun onSetInitialValue(defaultValue: Any?) {
         isChecked = getPersistedBoolean(defaultValue as? Boolean ?: false)
     }
 
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getBoolean(index, false)
-    }
+    override fun onGetDefaultValue(
+        a: TypedArray,
+        index: Int,
+    ): Any = a.getBoolean(index, false)
 
     override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
@@ -193,19 +192,18 @@ class TwoTargetSwitchPreference : TwoTargetPreference {
 
         constructor(superState: Parcelable?) : super(superState)
 
-        override fun writeToParcel(dest: Parcel, flags: Int) {
+        override fun writeToParcel(
+            dest: Parcel,
+            flags: Int,
+        ) {
             super.writeToParcel(dest, flags)
             dest.writeInt(if (mChecked) 1 else 0)
         }
 
         companion object CREATOR : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(parcel: Parcel): SavedState {
-                return SavedState(parcel)
-            }
+            override fun createFromParcel(parcel: Parcel): SavedState = SavedState(parcel)
 
-            override fun newArray(size: Int): Array<SavedState?> {
-                return arrayOfNulls(size)
-            }
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
         }
     }
 }

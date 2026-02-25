@@ -9,7 +9,6 @@ import com.drdisagree.pixellauncherenhanced.ui.base.ControlledPreferenceFragment
 import com.drdisagree.pixellauncherenhanced.ui.preferences.HookCheckPreference
 
 class HomePage : ControlledPreferenceFragmentCompat() {
-
     private var hookCheckPreference: HookCheckPreference? = null
 
     override val title: String
@@ -27,7 +26,10 @@ class HomePage : ControlledPreferenceFragmentCompat() {
     override val themeResource: Int
         get() = R.style.PrefsThemeCollapsingToolbar
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         super.onCreatePreferences(savedInstanceState, rootKey)
 
         findPreference<HookCheckPreference>(XPOSED_HOOK_CHECK)?.apply {
@@ -36,11 +38,9 @@ class HomePage : ControlledPreferenceFragmentCompat() {
             setOnPreferenceClickListener {
                 try {
                     val intent = Intent(Intent.ACTION_MAIN)
-                    intent.setComponent(
-                        ComponentName(
-                            "org.lsposed.manager",
-                            "org.lsposed.manager.ui.activities.MainActivity"
-                        )
+                    intent.component = ComponentName(
+                        "org.lsposed.manager",
+                        "org.lsposed.manager.ui.activities.MainActivity",
                     )
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)

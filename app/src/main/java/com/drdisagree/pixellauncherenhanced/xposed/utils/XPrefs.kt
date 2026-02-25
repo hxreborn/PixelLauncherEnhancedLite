@@ -12,31 +12,37 @@ import com.drdisagree.pixellauncherenhanced.xposed.HookEntry
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.log
 
 object XPrefs {
-
     @SuppressLint("StaticFieldLeak")
     lateinit var Xprefs: ExtendedRemotePreferences
-    private val listener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String? ->
-        loadEverything(key)
-    }
+    private val listener =
+        OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String? ->
+            loadEverything(key)
+        }
 
     val XprefsIsInitialized: Boolean
         get() = ::Xprefs.isInitialized
 
     fun init(context: Context) {
-        Xprefs = ExtendedRemotePreferences(
-            context,
-            BuildConfig.APPLICATION_ID,
-            SHARED_PREFERENCES,
-            true
-        )
+        Xprefs =
+            ExtendedRemotePreferences(
+                context,
+                BuildConfig.APPLICATION_ID,
+                SHARED_PREFERENCES,
+                true,
+            )
         (Xprefs as RemotePreferences).registerOnSharedPreferenceChangeListener(listener)
     }
 
     private fun loadEverything(vararg key: String?) {
-        if (key.isEmpty() ||
-            key[0].isNullOrEmpty() ||
-            PREF_UPDATE_EXCLUSIONS.any { exclusion -> key[0]?.equals(exclusion) == true }
-        ) return
+        if (key.isEmpty() || key[0].isNullOrEmpty() ||
+            PREF_UPDATE_EXCLUSIONS.any { exclusion ->
+                key[0]?.equals(
+                    exclusion,
+                ) == true
+            }
+        ) {
+            return
+        }
 
         HookEntry.runningMods.forEach { thisMod ->
             try {

@@ -9,22 +9,26 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 object VibrationUtils {
-
     private val executor: Executor = Executors.newSingleThreadExecutor()
 
     @SuppressLint("MissingPermission")
     @Suppress("deprecation")
-    fun triggerVibration(context: Context, intensity: Int) {
-        executor.execute(Runnable {
-            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            if (intensity == 0) {
-                return@Runnable
-            }
+    fun triggerVibration(
+        context: Context,
+        intensity: Int,
+    ) {
+        executor.execute(
+            Runnable {
+                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (intensity == 0) {
+                    return@Runnable
+                }
 
-            val effect = createVibrationEffect(intensity) ?: return@Runnable
-            vibrator.cancel()
-            vibrator.vibrate(effect)
-        })
+                val effect = createVibrationEffect(intensity) ?: return@Runnable
+                vibrator.cancel()
+                vibrator.vibrate(effect)
+            },
+        )
     }
 
     private fun createVibrationEffect(intensity: Int): VibrationEffect? {
@@ -37,13 +41,14 @@ object VibrationUtils {
                 else -> null
             }
         } else {
-            val amplitude = when (intensity) {
-                2 -> 30
-                3 -> 60
-                4 -> 90
-                5 -> 120
-                else -> return null
-            }
+            val amplitude =
+                when (intensity) {
+                    2 -> 30
+                    3 -> 60
+                    4 -> 90
+                    5 -> 120
+                    else -> return null
+                }
             VibrationEffect.createOneShot(100, amplitude)
         }
     }

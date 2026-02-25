@@ -1,13 +1,12 @@
-name: Build Debug APK
+name: Release APK
 
 on:
   push:
-    branches: [ "ple-lite" ]
-  workflow_dispatch:
+    tags: [ "v*" ]
 
 jobs:
-  build:
-    name: Build Debug APK
+  release:
+    name: Build and Release
     if: github.repository_owner == 'hxreborn'
     runs-on: ubuntu-latest
 
@@ -38,18 +37,11 @@ jobs:
       - name: Get application version name
         run: echo "VERSION_NAME=$(${{ github.workspace }}/gradlew -q printVersionName)" >> $GITHUB_ENV
 
-      - name: Set application version name
-        uses: chkfung/android-version-actions@v1.2.3
-        with:
-          gradlePath: app/build.gradle.kts
-          versionName: "${{ env.VERSION_NAME }} Dev${{ github.run_number }}"
+      - name: Build release APK
+        run: ./gradlew assembleRelease
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: "PLELite v${{ env.VERSION_NAME }} Dev${{ github.run_number }}"
-          path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          files: app/build/outputs/apk/release/*.apk
+          generate_release_notes: true

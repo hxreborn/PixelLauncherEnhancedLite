@@ -31,7 +31,6 @@ import com.drdisagree.pixellauncherenhanced.utils.LauncherUtils.restartLauncher
 import com.google.android.material.appbar.CollapsingToolbarLayout
 
 abstract class ControlledPreferenceFragmentCompat : PreferenceFragmentCompat() {
-
     private val changeListener =
         OnSharedPreferenceChangeListener { _: SharedPreferences, key: String? ->
             updateScreen(key)
@@ -51,7 +50,10 @@ abstract class ControlledPreferenceFragmentCompat : PreferenceFragmentCompat() {
     open val menuResource: Int
         get() = R.menu.default_menu
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         preferenceManager.setStorageDeviceProtected()
         preferenceManager.sharedPreferencesName = SHARED_PREFERENCES
         preferenceManager.sharedPreferencesMode = Context.MODE_PRIVATE
@@ -75,14 +77,17 @@ abstract class ControlledPreferenceFragmentCompat : PreferenceFragmentCompat() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         inflater.context.setTheme(themeResource)
 
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         val baseContext = context as AppCompatActivity
@@ -97,25 +102,31 @@ abstract class ControlledPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
         if (hasMenu) {
             val menuHost: MenuHost = requireActivity()
-            menuHost.addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menu.clear()
-                    menuInflater.inflate(menuResource, menu)
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    return when (menuItem.itemId) {
-                        R.id.force_close_launcher -> {
-                            context?.restartLauncher()
-                            true
-                        }
-
-                        else -> {
-                            false
-                        }
+            menuHost.addMenuProvider(
+                object : MenuProvider {
+                    override fun onCreateMenu(
+                        menu: Menu,
+                        menuInflater: MenuInflater,
+                    ) {
+                        menu.clear()
+                        menuInflater.inflate(menuResource, menu)
                     }
-                }
-            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+                    override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                        when (menuItem.itemId) {
+                            R.id.force_close_launcher -> {
+                                context?.restartLauncher()
+                                true
+                            }
+
+                            else -> {
+                                false
+                            }
+                        }
+                },
+                viewLifecycleOwner,
+                Lifecycle.State.RESUMED,
+            )
         }
     }
 

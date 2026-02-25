@@ -48,6 +48,17 @@
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="13sp" />
 
+            <com.google.android.material.textview.MaterialTextView
+                style="?attr/textAppearanceBodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp"
+                android:alpha="0.6"
+                android:text="@string/fork_subtitle"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="12sp" />
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,67 +70,45 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:alpha="0.8"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_news"
+                        android:id="@+id/btn_github_fork"
                         style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:drawableTop="@drawable/ic_news_scaled"
-                        android:drawableTint="?attr/colorOnBackground"
-                        android:text="@string/news"
-                        android:textColor="?attr/colorOnBackground"
-                        android:textSize="13sp"
-                        app:cornerRadius="12dp"
-                        app:iconPadding="2dp"
-                        app:iconSize="16dp" />
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginVertical="16dp"
-                        android:background="?attr/colorSurface" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_support"
-                        style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:drawableTop="@drawable/ic_help_scaled"
-                        android:drawableTint="?attr/colorOnBackground"
-                        android:text="@string/support"
-                        android:textColor="?attr/colorOnBackground"
-                        android:textSize="13sp"
-                        app:cornerRadius="12dp"
-                        app:iconPadding="2dp"
-                        app:iconSize="16dp" />
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginVertical="16dp"
-                        android:background="?attr/colorSurface" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_github"
-                        style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:alpha="0.8"
                         android:drawableTop="@drawable/ic_github_scaled"
                         android:drawableTint="?attr/colorOnBackground"
-                        android:text="@string/github"
+                        android:text="@string/github_fork_repo"
                         android:textColor="?attr/colorOnBackground"
                         android:textSize="13sp"
                         app:cornerRadius="12dp"
                         app:iconPadding="2dp"
                         app:iconSize="16dp" />
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="?attr/colorSurface" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_github_upstream"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.8"
+                        android:drawableTop="@drawable/ic_github_scaled"
+                        android:drawableTint="?attr/colorOnBackground"
+                        android:text="@string/github_upstream_repo"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textSize="13sp"
+                        app:cornerRadius="12dp"
+                        app:iconPadding="2dp"
+                        app:iconSize="16dp" />
                 </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.textview.MaterialTextView
@@ -128,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
-                android:text="Developer"
+                android:text="Credits"
                 android:textColor="?attr/colorOnSurface" />
 
             <com.google.android.material.card.MaterialCardView
@@ -194,7 +183,7 @@
                         android:background="?attr/colorSurface" />
 
                     <LinearLayout
-                        android:id="@+id/buymeacoffee"
+                        android:id="@+id/fork_maintainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
@@ -203,29 +192,12 @@
                         android:paddingHorizontal="22dp"
                         android:paddingVertical="16dp">
 
-                        <FrameLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:layout_gravity="center"
-                            android:layout_marginEnd="16dp">
-
-                            <ImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:layout_gravity="center"
-                                android:contentDescription="@string/icon"
-                                android:src="@drawable/buymeacoffee_bg"
-                                app:tint="?attr/colorOnSurface" />
-
-                            <ImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:layout_gravity="center"
-                                android:contentDescription="@string/icon"
-                                android:src="@drawable/buymeacoffee_fg"
-                                app:tint="?attr/colorPrimary" />
-
-                        </FrameLayout>
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/img_hxreborn" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -237,7 +209,7 @@
                                 style="?attr/textAppearanceTitleSmall"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/buymeacoffee_title"
+                                android:text="@string/fork_maintainer_name"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <com.google.android.material.textview.MaterialTextView
@@ -246,7 +218,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:alpha="0.8"
-                                android:text="@string/buymeacoffee_desc"
+                                android:text="@string/fork_maintainer_bio"
                                 android:textColor="?attr/colorOnSurface" />
 
                         </LinearLayout>
@@ -260,9 +232,5 @@
         android:id="@+id/header"
         layout="@layout/view_header_expandable" />
 
-    <nl.dionsegijn.konfetti.xml.KonfettiView
-        android:id="@+id/konfettiView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

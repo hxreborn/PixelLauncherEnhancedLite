@@ -7,13 +7,12 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 
 object MiscUtils {
-
     fun setToolbarTitle(
         context: Context,
         @StringRes title: Int,
         showBackButton: Boolean,
         toolbar: MaterialToolbar?,
-        collapsingToolbarLayout: CollapsingToolbarLayout?
+        collapsingToolbarLayout: CollapsingToolbarLayout?,
     ) {
         (context as AppCompatActivity).setSupportActionBar(toolbar)
         val actionBar = context.supportActionBar

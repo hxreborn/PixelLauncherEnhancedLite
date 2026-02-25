@@ -25,22 +25,6 @@
         app:showArrow="false" />
 
     <com.drdisagree.pixellauncherenhanced.ui.preferences.PreferenceMenu
-        android:icon="@drawable/ic_app_drawer"
-        android:key="launcherAppDrawer"
-        android:summary="@string/fragment_app_drawer_desc"
-        android:title="@string/fragment_app_drawer_title"
-        app:fragment="com.drdisagree.pixellauncherenhanced.ui.fragments.AppDrawerMods"
-        app:showArrow="false" />
-
-    <com.drdisagree.pixellauncherenhanced.ui.preferences.PreferenceMenu
-        android:icon="@drawable/ic_recents"
-        android:key="launcherRecents"
-        android:summary="@string/fragment_recents_desc"
-        android:title="@string/fragment_recents_title"
-        app:fragment="com.drdisagree.pixellauncherenhanced.ui.fragments.RecentsMods"
-        app:showArrow="false" />
-
-    <com.drdisagree.pixellauncherenhanced.ui.preferences.PreferenceMenu
         android:icon="@drawable/ic_miscellaneous"
         android:key="launcherMiscellaneous"
         android:summary="@string/fragment_miscellaneous_desc"

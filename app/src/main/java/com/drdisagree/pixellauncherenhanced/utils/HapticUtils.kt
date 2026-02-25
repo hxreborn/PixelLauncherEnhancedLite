@@ -6,10 +6,9 @@ import com.drdisagree.pixellauncherenhanced.data.common.Constants.VIBRATE_UI
 import com.drdisagree.pixellauncherenhanced.data.config.RPrefs
 
 object HapticUtils {
-
     enum class VibrationType {
         Weak,
-        Strong
+        Strong,
     }
 
     private fun View.vibrate(type: VibrationType) {

@@ -23,7 +23,7 @@
         app:forceApplySystemWindowInsetTop="true"
         app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
         app:maxLines="2"
-        app:scrimAnimationDuration="@android:integer/config_mediumAnimTime"
+        app:scrimAnimationDuration="@integer/anim_duration"
         app:statusBarScrim="@null"
         app:title="@string/app_name"
         app:titleCollapseMode="scale">
