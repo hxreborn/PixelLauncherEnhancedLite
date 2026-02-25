@@ -6,7 +6,7 @@ import com.drdisagree.pixellauncherenhanced.xposed.HookEntry.Companion.enqueuePr
 import com.drdisagree.pixellauncherenhanced.xposed.ModPack
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.VibrationUtils
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.XposedHook.Companion.findClass
-import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.hookMethod
+import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.runAfter
 import com.drdisagree.pixellauncherenhanced.xposed.utils.XPrefs.Xprefs
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
@@ -23,16 +23,15 @@ class GestureMod(
         val workspaceTouchListenerClass =
             findClass("com.android.launcher3.touch.WorkspaceTouchListener")
 
-        // onDoubleTap is inherited from SimpleOnGestureListener, not declared
-        // in WorkspaceTouchListener. hookAllMethods only searches declaredMethods,
-        // so we hook on the declaring class and filter by instance.
-        val declaringClass = workspaceTouchListenerClass?.methods
-            ?.find { it.name == "onDoubleTap" }
-            ?.declaringClass ?: return
+        // Hook inherited onDoubleTap directly via Method ref to bypass hookAllMethods limitation
+        val onDoubleTap =
+            workspaceTouchListenerClass
+                ?.methods
+                ?.find { it.name == "onDoubleTap" } ?: return
 
-        declaringClass.hookMethod("onDoubleTap").runAfter { param ->
+        onDoubleTap.runAfter { param ->
             if (!doubleTapToSleep) return@runAfter
-            if (workspaceTouchListenerClass?.isInstance(param.thisObject) != true) return@runAfter
+            if (!workspaceTouchListenerClass.isInstance(param.thisObject)) return@runAfter
 
             VibrationUtils.triggerVibration(mContext, 2)
             enqueueProxyCommand { proxy ->
