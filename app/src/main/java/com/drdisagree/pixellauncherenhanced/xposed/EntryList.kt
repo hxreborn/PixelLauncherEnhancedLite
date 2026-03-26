@@ -7,6 +7,7 @@ import com.drdisagree.pixellauncherenhanced.xposed.mods.HotseatMod
 import com.drdisagree.pixellauncherenhanced.xposed.mods.LauncherSettings
 import com.drdisagree.pixellauncherenhanced.xposed.mods.LauncherUtils
 import com.drdisagree.pixellauncherenhanced.xposed.mods.LockLayout
+import com.drdisagree.pixellauncherenhanced.xposed.mods.IconLabels
 import com.drdisagree.pixellauncherenhanced.xposed.mods.ShortcutBadge
 import com.drdisagree.pixellauncherenhanced.xposed.mods.SmartSpace
 import com.drdisagree.pixellauncherenhanced.xposed.mods.TaskbarHandle
@@ -24,6 +25,7 @@ object EntryList {
             LockLayout::class.java,
             TaskbarHandle::class.java,
             ShortcutBadge::class.java,
+            IconLabels::class.java,
         )
 
     fun getEntries(packageName: String): ArrayList<Class<out ModPack>> {

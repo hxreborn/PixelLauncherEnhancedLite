@@ -25,6 +25,8 @@
     <string name="fragment_about_title">Про додаток</string>
     <string name="fragment_about_desc">Про цей додаток</string>
     <string name="remove_shortcut_badge_title">Видалити значок ярлика</string>
+    <string name="desktop_icon_labels_title">Icon labels on desktop</string>
+    <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Подвійне натискання для сну</string>
     <string name="double_tap_to_sleep_desc">Подвійне натискання на головному екрані для вимкнення екрана</string>
     <string name="hide_at_a_glance_title">Сховати віджет \"At A Glance\"</string>

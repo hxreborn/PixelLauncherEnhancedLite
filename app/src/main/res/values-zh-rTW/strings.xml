@@ -25,6 +25,8 @@
     <string name="fragment_about_title">關於</string>
     <string name="fragment_about_desc">關於本應用程式</string>
     <string name="remove_shortcut_badge_title">隱藏捷徑標誌圖示</string>
+    <string name="desktop_icon_labels_title">Icon labels on desktop</string>
+    <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">雙擊即可休眠</string>
     <string name="double_tap_to_sleep_desc">輕觸兩下螢幕即可關閉螢幕</string>
     <string name="hide_at_a_glance_title">隱藏 At A Glance</string>
