@@ -20,7 +20,9 @@
 
 # Xposed
 -keep class de.robv.android.xposed.**
--keep class com.drdisagree.pixellauncherenhanced.xposed.InitHook
+-keep class com.drdisagree.pixellauncherenhanced.xposed.InitHook {
+    <init>();
+}
 -keepnames class com.drdisagree.pixellauncherenhanced.xposed.**
 -keepnames class com.drdisagree.pixellauncherenhanced.xposed.utils.XPrefs
 -keep class com.drdisagree.pixellauncherenhanced.xposed.** {
