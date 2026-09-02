@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Chạm hai lần để tắt màn hình</string>
     <string name="double_tap_to_sleep_desc">Gõ hai lần vào chỗ trống trên màn hình chính để tắt máy</string>
-    <string name="hide_at_a_glance_title">Ẩn At A Glance</string>
-    <string name="hide_at_a_glance_desc">Ẩn At A Glance trong màn hình chính</string>
     <string name="hide_desktop_search_bar_title">Ẩn thanh tìm kiếm ở màn hình chính</string>
     <string name="hide_desktop_search_bar_desc">Ẩn thanh tìm kiếm ở thanh dock màn hình chính</string>
     <string name="restart_launcher_title">Khởi động lại</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">Bố cục đã bị khoá!?!?!?!?!</string>
     <string name="section_general_title">Chung</string>
     <string name="section_search_bar_title">Thanh tìm kiếm</string>
-    <string name="section_quickspace_title">Không gian nhanh</string>
     <string name="value_output">Value: %s</string>
 </resources>

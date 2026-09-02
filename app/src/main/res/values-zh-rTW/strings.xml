@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">雙擊即可休眠</string>
     <string name="double_tap_to_sleep_desc">輕觸兩下螢幕即可關閉螢幕</string>
-    <string name="hide_at_a_glance_title">隱藏 At A Glance</string>
-    <string name="hide_at_a_glance_desc">於主畫面中隱藏 At A Glance 小工具</string>
     <string name="hide_desktop_search_bar_title">隱藏主畫面搜尋欄</string>
     <string name="hide_desktop_search_bar_desc">從 Dock 中隱藏搜尋欄</string>
     <string name="restart_launcher_title">重新啟動</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">已鎖定配置！</string>
     <string name="section_general_title">一般</string>
     <string name="section_search_bar_title">搜索欄</string>
-    <string name="section_quickspace_title">Quickspace</string>
     <string name="value_output">Value: %s</string>
 </resources>

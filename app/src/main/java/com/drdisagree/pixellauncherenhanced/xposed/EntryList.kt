@@ -9,7 +9,6 @@ import com.drdisagree.pixellauncherenhanced.xposed.mods.LauncherUtils
 import com.drdisagree.pixellauncherenhanced.xposed.mods.LockLayout
 import com.drdisagree.pixellauncherenhanced.xposed.mods.IconLabels
 import com.drdisagree.pixellauncherenhanced.xposed.mods.ShortcutBadge
-import com.drdisagree.pixellauncherenhanced.xposed.mods.SmartSpace
 import com.drdisagree.pixellauncherenhanced.xposed.mods.TaskbarHandle
 import com.drdisagree.pixellauncherenhanced.xposed.utils.BroadcastHook
 
@@ -20,7 +19,6 @@ object EntryList {
             LauncherUtils::class.java,
             GestureMod::class.java,
             HotseatMod::class.java,
-            SmartSpace::class.java,
             LauncherSettings::class.java,
             LockLayout::class.java,
             TaskbarHandle::class.java,

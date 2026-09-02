@@ -23,19 +23,6 @@
     </com.drdisagree.pixellauncherenhanced.ui.preferences.PreferenceCategory>
 
     <com.drdisagree.pixellauncherenhanced.ui.preferences.PreferenceCategory
-        android:key="xposed_home_screen_quickspace"
-        android:title="@string/section_quickspace_title"
-        app:iconSpaceReserved="false">
-
-        <com.drdisagree.pixellauncherenhanced.ui.preferences.SwitchPreference
-            android:key="xposed_hideataglance"
-            android:summary="@string/hide_at_a_glance_desc"
-            android:title="@string/hide_at_a_glance_title"
-            app:iconSpaceReserved="false" />
-
-    </com.drdisagree.pixellauncherenhanced.ui.preferences.PreferenceCategory>
-
-    <com.drdisagree.pixellauncherenhanced.ui.preferences.PreferenceCategory
         android:key="xposed_home_screen_searchbar"
         android:title="@string/section_search_bar_title"
         app:iconSpaceReserved="false">

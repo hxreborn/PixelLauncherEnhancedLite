@@ -18,7 +18,6 @@ object Constants {
     const val ACTION_HOOK_CHECK_REQUEST = "${BuildConfig.APPLICATION_ID}.ACTION_HOOK_CHECK_REQUEST"
     const val ACTION_HOOK_CHECK_RESULT = "${BuildConfig.APPLICATION_ID}.ACTION_HOOK_CHECK_RESULT"
 const val DOUBLE_TAP_TO_SLEEP = "xposed_doubletaptosleep"
-    const val HIDE_AT_A_GLANCE = "xposed_hideataglance"
     const val DESKTOP_SEARCH_BAR = "xposed_desktopsearchbar"
     const val RESTART_LAUNCHER = "xposed_restartlauncher"
     const val DEVELOPER_OPTIONS = "xposed_developeroptions"

@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Çift dokunuşla uyku</string>
     <string name="double_tap_to_sleep_desc">Ana ekranda boş alana çift dokunarak ekranı kapat</string>
-    <string name="hide_at_a_glance_title">Bir Bakışta’yı gizle</string>
-    <string name="hide_at_a_glance_desc">Ana ekrandan Bir Bakışta’yı gizle</string>
     <string name="hide_desktop_search_bar_title">Masaüstü arama çubuğunu gizle</string>
     <string name="hide_desktop_search_bar_desc">Masaüstü dock’tan arama çubuğunu gizle</string>
     <string name="restart_launcher_title">Yeniden başlat</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">Düzen kilitli!</string>
     <string name="section_general_title">Genel</string>
     <string name="section_search_bar_title">Arama çubuğu</string>
-    <string name="section_quickspace_title">Hızlı alan</string>
     <string name="value_output">Değer: %s</string>
 </resources>

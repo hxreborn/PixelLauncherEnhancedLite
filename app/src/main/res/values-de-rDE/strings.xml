@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Doppeltes Tippen aktiviert Standby-Modus</string>
     <string name="double_tap_to_sleep_desc">Doppelt auf den Startbildschirm tippen, um den Bildschirm auszuschalten</string>
-    <string name="hide_at_a_glance_title">Auf einen Blick ausblenden</string>
-    <string name="hide_at_a_glance_desc">Auf einen Blick vom Startbildschirm ausblenden</string>
     <string name="hide_desktop_search_bar_title">Desktop-Suchleiste ausblenden</string>
     <string name="hide_desktop_search_bar_desc" />
     <string name="restart_launcher_title">Neustart</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">Layout ist gesperrt!</string>
     <string name="section_general_title">Allgemein</string>
     <string name="section_search_bar_title">Suchleiste</string>
-    <string name="section_quickspace_title">Schnellauswahl</string>
     <string name="value_output">Value: %s</string>
 </resources>

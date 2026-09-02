@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Двойное нажатие</string>
     <string name="double_tap_to_sleep_desc">Дважды нажмите на пустое место на главном экране, чтобы выключить экран</string>
-    <string name="hide_at_a_glance_title">Скрыть \"Самое главное\"</string>
-    <string name="hide_at_a_glance_desc">Скрывает виджет \"Самое главное\"</string>
     <string name="hide_desktop_search_bar_title">Скрыть строку поиска</string>
     <string name="hide_desktop_search_bar_desc">Скрыть панель поиска из дока на рабочем столе</string>
     <string name="restart_launcher_title">Перезагрузка</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">Разметка заблокирована!</string>
     <string name="section_general_title">Основные</string>
     <string name="section_search_bar_title">Строка поиска</string>
-    <string name="section_quickspace_title">«Первый взгляд»</string>
     <string name="value_output">Значение: %s</string>
 </resources>

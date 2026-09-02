@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Подвійне натискання для сну</string>
     <string name="double_tap_to_sleep_desc">Подвійне натискання на головному екрані для вимкнення екрана</string>
-    <string name="hide_at_a_glance_title">Сховати віджет \"At A Glance\"</string>
-    <string name="hide_at_a_glance_desc">Сховати віджет \"At A Glance\" з головного екрану</string>
     <string name="hide_desktop_search_bar_title">Приховати рядок пошуку</string>
     <string name="hide_desktop_search_bar_desc">Приховати рядок пошуку з доку головного екрану</string>
     <string name="restart_launcher_title">Перезапустити</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">Композиція закріплена!</string>
     <string name="section_general_title">Загальні</string>
     <string name="section_search_bar_title">Рядок пошуку</string>
-    <string name="section_quickspace_title">Швидкий простір</string>
     <string name="value_output">Значення: %s</string>
 </resources>

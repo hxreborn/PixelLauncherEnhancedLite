@@ -44,8 +44,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Double tap to sleep</string>
     <string name="double_tap_to_sleep_desc">Double tap on home screen empty space to turn off the screen. Pixel Launcher needs root access</string>
-    <string name="hide_at_a_glance_title">Hide At A Glance</string>
-    <string name="hide_at_a_glance_desc">Hide at a glance from home screen</string>
     <string name="hide_desktop_search_bar_title">Hide desktop search bar</string>
     <string name="hide_desktop_search_bar_desc">Hide search bar from desktop dock</string>
     <string name="restart_launcher_title">Restart</string>
@@ -64,7 +62,6 @@
     <string name="layout_is_locked">Layout is locked!</string>
     <string name="section_general_title">General</string>
     <string name="section_search_bar_title">Search bar</string>
-    <string name="section_quickspace_title">Quickspace</string>
     <string name="value_output">Value: %s</string>
 
 </resources>

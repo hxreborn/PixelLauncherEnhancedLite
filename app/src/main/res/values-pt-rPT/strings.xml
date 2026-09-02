@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Toque duas vezes para desligar a tela</string>
     <string name="double_tap_to_sleep_desc">Toque duas vezes no espaço vazio da tela inicial para desligar a tela</string>
-    <string name="hide_at_a_glance_title">Esconder At A Glance</string>
-    <string name="hide_at_a_glance_desc">Esconder At a Glance da tela inicial</string>
     <string name="hide_desktop_search_bar_title">Ocultar barra de pesquisa do desktop</string>
     <string name="hide_desktop_search_bar_desc">Ocultar a barra de pesquisa da dock</string>
     <string name="restart_launcher_title">Reiniciar</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">Layout bloqueado!</string>
     <string name="section_general_title">Geral</string>
     <string name="section_search_bar_title">Barra de pesquisa</string>
-    <string name="section_quickspace_title">Espaço rápido</string>
     <string name="value_output">Value: %s</string>
 </resources>

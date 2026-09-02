@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">双击息屏</string>
     <string name="double_tap_to_sleep_desc">双击桌面屏幕空白区域关闭屏幕</string>
-    <string name="hide_at_a_glance_title">隐藏咨询一览</string>
-    <string name="hide_at_a_glance_desc">主桌面隐藏资讯一览</string>
     <string name="hide_desktop_search_bar_title">隐藏桌面搜索栏</string>
     <string name="hide_desktop_search_bar_desc">隐藏桌面搜索栏</string>
     <string name="restart_launcher_title">重启</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">布局已被锁定！</string>
     <string name="section_general_title">通用</string>
     <string name="section_search_bar_title">搜索栏</string>
-    <string name="section_quickspace_title">快捷空间</string>
     <string name="value_output">值大小: %s</string>
 </resources>

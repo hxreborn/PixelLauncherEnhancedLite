@@ -29,8 +29,6 @@
     <string name="app_drawer_icon_labels_title">Icon labels in app drawer</string>
     <string name="double_tap_to_sleep_title">Dotknij dwukrotnie, aby uśpić</string>
     <string name="double_tap_to_sleep_desc">Dwukrotnie dotknij pustą przestrzeń na ekranie głównym, aby wyłączyć ekran</string>
-    <string name="hide_at_a_glance_title">Ukryj widżet „W skrócie”</string>
-    <string name="hide_at_a_glance_desc">Ukryj widżet „W skrócie” na ekranie głównym</string>
     <string name="hide_desktop_search_bar_title">Ukryj pasek wyszukiwania na ekranie głównym</string>
     <string name="hide_desktop_search_bar_desc">Ukryj pasek wyszukiwania z dolnego paska ekranu głównego</string>
     <string name="restart_launcher_title">Uruchom ponownie</string>
@@ -48,6 +46,5 @@
     <string name="layout_is_locked">Układ jest zablokowany!</string>
     <string name="section_general_title">Ogólne</string>
     <string name="section_search_bar_title">Pasek wyszukiwania</string>
-    <string name="section_quickspace_title">Szybki podgląd</string>
     <string name="value_output">Wartość: %s</string>
 </resources>
