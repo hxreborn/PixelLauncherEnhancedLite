@@ -2,7 +2,6 @@ package com.drdisagree.pixellauncherenhanced.xposed.mods
 
 import android.content.Context
 import com.drdisagree.pixellauncherenhanced.data.common.Constants.APP_DRAWER_ICON_LABELS
-import com.drdisagree.pixellauncherenhanced.data.common.Constants.DESKTOP_ICON_LABELS
 import com.drdisagree.pixellauncherenhanced.xposed.ModPack
 import com.drdisagree.pixellauncherenhanced.xposed.mods.LauncherUtils.Companion.reloadIcons
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.XposedHook.Companion.findClass
@@ -18,20 +17,15 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
 class IconLabels(context: Context) : ModPack(context) {
 
-    private var showDesktopLabels = true
     private var showDrawerLabels = true
 
     override fun updatePrefs(vararg key: String) {
         Xprefs.apply {
-            showDesktopLabels = getBoolean(DESKTOP_ICON_LABELS, true)
             showDrawerLabels = getBoolean(APP_DRAWER_ICON_LABELS, true)
         }
 
         when (key.firstOrNull()) {
-            in setOf(
-                DESKTOP_ICON_LABELS,
-                APP_DRAWER_ICON_LABELS
-            ) -> reloadIcons()
+            APP_DRAWER_ICON_LABELS -> reloadIcons()
         }
     }
 
@@ -50,9 +44,7 @@ class IconLabels(context: Context) : ModPack(context) {
                 itemInfo.setField("title", null)
             }
 
-            if (mDisplay.isDesktop() && !showDesktopLabels) {
-                removeLabel()
-            } else if (mDisplay.isDrawer() && !showDrawerLabels) {
+            if (mDisplay.isDrawer() && !showDrawerLabels) {
                 removeLabel()
             }
         }
@@ -68,9 +60,7 @@ class IconLabels(context: Context) : ModPack(context) {
                 }
             }
 
-            if (mDisplay.isDesktop() && !showDesktopLabels) {
-                reAddLabel()
-            } else if (mDisplay.isDrawer() && !showDrawerLabels) {
+            if (mDisplay.isDrawer() && !showDrawerLabels) {
                 reAddLabel()
             }
         }
@@ -91,15 +81,6 @@ class IconLabels(context: Context) : ModPack(context) {
         }
     }
 
-    private fun Int.isDesktop(): Boolean {
-        return this in setOf(
-            DISPLAY_WORKSPACE,
-            DISPLAY_FOLDER,
-            DISPLAY_SEARCH_RESULT,
-            DISPLAY_SEARCH_RESULT_SMALL
-        )
-    }
-
     private fun Int.isDrawer(): Boolean {
         return this in setOf(
             DISPLAY_ALL_APPS,
@@ -109,11 +90,7 @@ class IconLabels(context: Context) : ModPack(context) {
     }
 
     companion object {
-        const val DISPLAY_WORKSPACE: Int = 0
         const val DISPLAY_ALL_APPS: Int = 1
-        const val DISPLAY_FOLDER: Int = 2
-        const val DISPLAY_SEARCH_RESULT: Int = 6
-        const val DISPLAY_SEARCH_RESULT_SMALL: Int = 7
         const val DISPLAY_PREDICTION_ROW: Int = 8
         const val DISPLAY_SEARCH_RESULT_APP_ROW: Int = 9
     }

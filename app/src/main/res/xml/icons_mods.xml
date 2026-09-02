@@ -9,12 +9,6 @@
 
     <com.drdisagree.pixellauncherenhanced.ui.preferences.SwitchPreference
         android:defaultValue="true"
-        android:key="xposed_desktopiconlabels"
-        android:title="@string/desktop_icon_labels_title"
-        app:iconSpaceReserved="false" />
-
-    <com.drdisagree.pixellauncherenhanced.ui.preferences.SwitchPreference
-        android:defaultValue="true"
         android:key="xposed_appdrawericonlabels"
         android:title="@string/app_drawer_icon_labels_title"
         app:iconSpaceReserved="false" />
