@@ -90,6 +90,13 @@ class LauncherSettings(
                         preferenceClickListenerFieldName = field.name
                     }?.type
 
+        val preferenceStyledConstructor =
+            preferenceClass.declaredConstructors.firstOrNull {
+                it.parameterTypes.contentEquals(
+                    arrayOf(Context::class.java, AttributeSet::class.java),
+                )
+            }
+
         launcherSettingsFragmentClass.hookMethod("onCreatePreferences").runAfter { param ->
             if (!entryInLauncher) return@runAfter
 
@@ -97,42 +104,37 @@ class LauncherSettings(
             val launchIntent: Intent =
                 mContext.packageManager.getLaunchIntentForPackage(BuildConfig.APPLICATION_ID)
                     ?: return@runAfter
-            val activity = param.thisObject.callMethod("getActivity")
-            val thisTitle = activity.callMethod("getTitle")
-            val expectedTitle =
-                try {
-                    mContext.resources.getString(
-                        mContext.resources.getIdentifier(
-                            "settings_button_text",
-                            "string",
-                            mContext.packageName,
-                        ),
-                    )
-                } catch (_: Throwable) {
-                    mContext.resources.getString(
-                        mContext.resources.getIdentifier(
-                            "settings_title",
-                            "string",
-                            mContext.packageName,
-                        ),
-                    )
-                }
+            // Root screen only; sub-screens pass a non-null preference root key
+            if (param.args.getOrNull(1) != null) return@runAfter
 
-            if (thisTitle != expectedTitle) return@runAfter
+            // android.R.attr.preferenceStyle resolves the framework layout, which the
+            // androidx view holder cannot bind
+            val themedContext =
+                param.thisObject.callMethodSilently("getActivity") as? Context
+                    ?: preferenceScreen.callMethodSilently("getContext") as? Context
+                    ?: mContext
 
             val myPreference =
-                preferenceClass
-                    .getDeclaredConstructor(
-                        Context::class.java,
-                        AttributeSet::class.java,
-                        Int::class.javaPrimitiveType,
-                        Int::class.javaPrimitiveType,
-                    ).newInstance(
-                        mContext,
-                        null,
-                        android.R.attr.preferenceStyle,
-                        0,
-                    )
+                if (preferenceStyledConstructor != null) {
+                    preferenceStyledConstructor.newInstance(themedContext, null)
+                } else {
+                    preferenceClass
+                        .getDeclaredConstructor(
+                            Context::class.java,
+                            AttributeSet::class.java,
+                            Int::class.javaPrimitiveType,
+                            Int::class.javaPrimitiveType,
+                        ).newInstance(
+                            themedContext,
+                            null,
+                            themedContext.resources.getIdentifier(
+                                "preferenceStyle",
+                                "attr",
+                                mContext.packageName,
+                            ),
+                            0,
+                        )
+                }
 
             if (myPreference.hasMethod("setKey", String::class.java)) {
                 myPreference.callMethod("setKey", BuildConfig.APPLICATION_ID)
@@ -210,12 +212,37 @@ class LauncherSettings(
                 }
         }
 
-        val optionsPopupViewClass = findClass("com.android.launcher3.views.OptionsPopupView")
+        hookOptionsPopupEntry()
+    }
+
+    private fun hookOptionsPopupEntry() {
         val optionItemClass =
-            findClass($$"com.android.launcher3.views.OptionsPopupView$OptionItem")!!
+            findClass(
+                $$"com.android.launcher3.views.OptionsPopupView$OptionItem",
+                suppressError = true,
+            )
+
+        if (optionItemClass != null) {
+            hookLegacyOptionsPopup(optionItemClass)
+        } else {
+            hookWorkspaceLongPressOptions()
+        }
+    }
+
+    @Suppress("deprecation")
+    private fun hookLegacyOptionsPopup(optionItemClass: Class<*>) {
+        val optionsPopupViewClass =
+            findClass("com.android.launcher3.views.OptionsPopupView", suppressError = true)
         val launcherEventEnum =
-            findClass($$"com.android.launcher3.logging.StatsLogManager$LauncherEvent")!!
-        val eventEnum = findClass($$"com.android.launcher3.logging.StatsLogManager$EventEnum")!!
+            findClass(
+                $$"com.android.launcher3.logging.StatsLogManager$LauncherEvent",
+                suppressError = true,
+            ) ?: return
+        val eventEnum =
+            findClass(
+                $$"com.android.launcher3.logging.StatsLogManager$EventEnum",
+                suppressError = true,
+            ) ?: return
         val optionItemConstructors = optionItemClass.declaredConstructors
 
         optionItemClass.hookConstructor().runBefore { param ->
@@ -363,5 +390,68 @@ class LauncherSettings(
 
                 param.result = options
             }
+    }
+
+    private fun hookWorkspaceLongPressOptions() {
+        val workspaceLongPressOptionsClass =
+            findClass("com.android.launcher3.popup.WorkspaceLongPressOptions") ?: return
+        val popupDataClass = findClass("com.android.launcher3.popup.PopupData") ?: return
+        val fixedStringClass =
+            findClass($$"com.android.launcher3.popup.ui.StringContainer$FixedString") ?: return
+        val popupDataConstructor =
+            popupDataClass.declaredConstructors.maxByOrNull { it.parameterTypes.size } ?: return
+
+        if (popupDataConstructor.parameterTypes.size != 7) {
+            log(this@LauncherSettings, "Unexpected PopupData constructor arity.")
+            return
+        }
+
+        val actionType = popupDataConstructor.parameterTypes[6]
+
+        workspaceLongPressOptionsClass.hookMethod("getAll").runAfter { param ->
+            if (!entryInPopup) return@runAfter
+
+            @Suppress("UNCHECKED_CAST")
+            val options = param.result as? MutableList<Any> ?: return@runAfter
+            val template = options.lastOrNull() ?: return@runAfter
+
+            val iconResId =
+                mContext.resources
+                    .getIdentifier("ic_setting", "drawable", mContext.packageName)
+                    .takeIf { it != 0 }
+                    ?: template.getField("iconResId") as Int
+
+            val action =
+                Proxy.newProxyInstance(
+                    popupDataClass.classLoader,
+                    arrayOf(actionType),
+                ) { proxy, method, args ->
+                    when (method.name) {
+                        "hashCode" -> System.identityHashCode(proxy)
+                        "equals" -> proxy === args?.firstOrNull()
+                        "toString" -> "PLELiteSettingsAction"
+                        else -> {
+                            mContext.packageManager
+                                .getLaunchIntentForPackage(BuildConfig.APPLICATION_ID)
+                                ?.let { mContext.startActivity(it) }
+                            null
+                        }
+                    }
+                }
+
+            options.add(
+                popupDataConstructor.newInstance(
+                    iconResId,
+                    iconResId,
+                    fixedStringClass
+                        .getDeclaredConstructor(String::class.java)
+                        .newInstance(modRes.getString(R.string.app_name_shortened)),
+                    template.getField("category"),
+                    template.getField("eventId"),
+                    "",
+                    action,
+                ),
+            )
+        }
     }
 }
