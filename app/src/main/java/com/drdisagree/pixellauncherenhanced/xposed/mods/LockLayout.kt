@@ -38,8 +38,14 @@ class LockLayout(
             findClass(
                 $$"com.android.launcher3.popup.PopupContainerWithArrow$LauncherPopupItemDragHandler",
                 "com.android.launcher3.popup.LauncherPopupItemDragHandler",
+                suppressError = true,
             )
-        val optionsPopupViewClass = findClass("com.android.launcher3.views.OptionsPopupView")
+        val deepShortcutDragHandlerClass =
+            findClass("com.android.launcher3.popup.DeepShortcutDragHandler", suppressError = true)
+        val optionsPopupViewClass =
+            findClass("com.android.launcher3.views.OptionsPopupView", suppressError = true)
+        val workspaceLongPressOptionsClass =
+            findClass("com.android.launcher3.popup.WorkspaceLongPressOptions", suppressError = true)
         val taskbarDragControllerClass =
             findClass(
                 "com.android.launcher3.taskbar.TaskbarDragController",
@@ -90,10 +96,18 @@ class LockLayout(
             param.result = null
         }
 
-        launcherPopupItemDragHandlerClass.hookMethod("onLongClick").runBefore { param ->
-            if (!lockLayout) return@runBefore
+        if (launcherPopupItemDragHandlerClass != null) {
+            launcherPopupItemDragHandlerClass.hookMethod("onLongClick").runBefore { param ->
+                if (!lockLayout) return@runBefore
 
-            param.result = false
+                param.result = false
+            }
+        } else {
+            deepShortcutDragHandlerClass.hookMethod("canStartDrag").runBefore { param ->
+                if (!lockLayout) return@runBefore
+
+                param.result = false
+            }
         }
 
         fun showLayoutLockedToast() {
@@ -150,8 +164,15 @@ class LockLayout(
                         }
                 }
             }
+        } else if (workspaceLongPressOptionsClass.hasMethod("openWidgetPicker")) {
+            workspaceLongPressOptionsClass.hookMethod("openWidgetPicker").runBefore { param ->
+                if (!lockLayout) return@runBefore
+
+                showLayoutLockedToast()
+                param.result = null
+            }
         } else {
-            log("Suitable method not found in OptionsPopupView class.")
+            log("No supported widget picker entry point found.")
         }
     }
 }
