@@ -1,14 +1,13 @@
 package com.drdisagree.pixellauncherenhanced.xposed.mods
 
 import android.content.Context
-import android.util.AttributeSet
 import android.view.View
 import com.drdisagree.pixellauncherenhanced.data.common.Constants.DESKTOP_SEARCH_BAR
 import com.drdisagree.pixellauncherenhanced.xposed.ModPack
 import com.drdisagree.pixellauncherenhanced.xposed.mods.LauncherUtils.Companion.restartLauncher
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.ResourceHookManager
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.XposedHook.Companion.findClass
-import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.getField
+import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.getFieldSilently
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.hookConstructor
 import com.drdisagree.pixellauncherenhanced.xposed.mods.toolkit.hookMethod
 import com.drdisagree.pixellauncherenhanced.xposed.utils.XPrefs.Xprefs
@@ -36,20 +35,12 @@ class HotseatMod(
     override fun handleLoadPackage(loadPackageParam: LoadPackageParam) {
         val hotseatClass = findClass("com.android.launcher3.Hotseat")
 
-        hotseatClass
-            .hookConstructor()
-            .parameters(
-                Context::class.java,
-                AttributeSet::class.java,
-                Int::class.javaPrimitiveType,
-            ).runAfter { param ->
-                mQuickSearchBar = param.thisObject.getField("mQsb") as View
-                triggerSearchBarVisibility()
-            }
+        hotseatClass.hookConstructor().runAfter { param ->
+            captureSearchBar(param.thisObject)
+        }
 
         hotseatClass.hookMethod("setInsets").runAfter { param ->
-            mQuickSearchBar = param.thisObject.getField("mQsb") as View
-            triggerSearchBarVisibility()
+            captureSearchBar(param.thisObject)
         }
 
         ResourceHookManager
@@ -58,6 +49,11 @@ class HotseatMod(
             .forPackageName(loadPackageParam.packageName)
             .addResource("qsb_widget_height") { 0 }
             .apply()
+    }
+
+    private fun captureSearchBar(hotseat: Any?) {
+        mQuickSearchBar = hotseat.getFieldSilently("mQsb") as? View ?: return
+        triggerSearchBarVisibility()
     }
 
     private fun triggerSearchBarVisibility() {
